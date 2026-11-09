@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WAA Global Art Explorer - 3D Interactive Globe</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 0;
+  background: #061519;
+  color: #f4f7f4;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+.stage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: radial-gradient(ellipse at 50% 42%, #164247 0%, #071c21 58%, #041014 100%);
+}
+#globeViz {
+  position: absolute;
+  inset: 0;
+}
+#loading {
+  position: absolute;
+  top: 45%;
+  width: 100%;
+  text-align: center;
+  color: #b9d2ce;
+  font-size: 14px;
+  z-index: 10;
+  font-family: Georgia, serif;
+  letter-spacing: 1px;
+}
+.hint {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: #a8c3c0;
+  font-size: 11px;
+  letter-spacing: 1px;
+  pointer-events: none;
+  z-index: 10;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div id="loading">Loading Worldwide Art Advocacy 3D Globe…</div>
+  <div id="globeViz"></div>
+  <div class="hint">DRAG TO ROTATE · SCROLL TO ZOOM · CLICK ANY REGION</div>
+</div>
+
+<!-- External dependencies for Three.js and Globe.gl -->
+<script src="https://unpkg.com/three"></script>
+<script src="https://unpkg.com/globe.gl"></script>
+
+<script>
+(() => {
+  const regions = {
+    "Africa": [1, 20],
+    "Europe": [52, 15],
+    "Asia": [28, 90],
+    "North America": [40, -100],
+    "Latin America & Caribbean": [-15, -60],
+    "Oceania": [-23, 145]
+  };
+
+  let globe;
+
+  if (typeof Globe === "undefined") {
+    document.getElementById("loading").textContent = "Globe library unavailable. Check network connection.";
+    return;
+  }
+
+  try {
+    const globeData = Object.keys(regions).map(key => ({
+      name: key,
+      lat: regions[key][0],
+      lng: regions[key][1]
+    }));
+
+    globe = Globe()(document.getElementById("globeViz"))
+      .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
+      .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
+      .backgroundColor("rgba(0,0,0,0)")
+      .showAtmosphere(true)
+      .atmosphereColor("#58bdb5")
+      .atmosphereAltitude(0.18)
+      .htmlElementsData(globeData)
+      .htmlLat(d => d.lat)
+      .htmlLng(d => d.lng)
+      .htmlElement(d => {
+        const el = document.createElement('button');
+        el.innerHTML = `<div style="background:#1d7979;border:2px solid #e5f0ed;color:#fff;padding:6px 12px;border-radius:14px;font-size:11px;font-weight:bold;cursor:pointer;box-shadow:0 0 15px rgba(29,121,121,0.9);white-space:nowrap;font-family:Arial,sans-serif;">${d.name}</div>`;
+        el.style.transform = 'translate(-50%, -50px)';
+        el.style.border = 'none';
+        el.style.background = 'transparent';
+        el.style.padding = '0';
+        
+        el.onclick = (e) => {
+          e.stopPropagation();
+          window.parent.postMessage({ type: 'WAA_REGION_SELECT', region: d.name }, '*');
+        };
+        return el;
+      });
+
+    const controls = globe.controls();
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.35;
+    controls.enableZoom = true;
+
+    globe.pointOfView({ lat: 18, lng: 5, altitude: 2.25 });
+    document.getElementById("loading").style.display = "none";
+
+    const handleResize = () => {
+      globe.width(window.innerWidth);
+      globe.height(window.innerHeight);
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+  } catch (err) {
+    document.getElementById("loading").textContent = "Globe initialization failed.";
+    console.error(err);
+  }
+})();
+</script>
+</body>
+</html>
