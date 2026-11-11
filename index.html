@@ -1,150 +1,267 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WAA Global Art Explorer - 3D Globe</title>
+<meta name="theme-color" content="#061519">
+<title>WAA Global Art Explorer</title>
+
 <style>
 * { box-sizing: border-box; }
-body { margin: 0; background: #061519; color: #f4f7f4; font-family: Arial, sans-serif; overflow-x: hidden; }
-.stage { width: 100vw; height: 460px; position: relative; background: radial-gradient(ellipse at 50% 42%, #164247, #071c21 58%, #041014); }
+html, body {
+  margin: 0; width: 100%; height: 100%; overflow: hidden;
+  background: #061519; color: #f4f7f4; font-family: Arial, sans-serif;
+}
+.stage {
+  position: relative; width: 100%; height: 100%;
+  background: radial-gradient(ellipse at 50% 42%, #164247 0%, #071c21 58%, #041014 100%);
+}
 #globeViz { position: absolute; inset: 0; }
-#loading { position: absolute; top: 40%; width: 100%; text-align: center; color: #b9d2ce; font-size: 14px; z-index: 10; font-family: Georgia, serif; }
-.hint { position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: #a8c3c0; font-size: 11px; pointer-events: none; z-index: 10; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+#loading {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  text-align: center; padding: 24px; color: #b9d2ce; font: 15px Georgia, serif; z-index: 5;
+}
+#notice {
+  position: absolute; z-index: 7; top: 12px; left: 50%; transform: translateX(-50%);
+  max-width: calc(100% - 24px); padding: 8px 14px; border: 1px solid #376766;
+  border-radius: 20px; background: #061519ee; color: #c9dfda; font-size: 11px; text-align: center; pointer-events: none;
+}
+.hint {
+  position: absolute; z-index: 6; bottom: 12px; left: 0; width: 100%; text-align: center;
+  padding: 0 12px; color: #a8c3c0; font-size: 10px; letter-spacing: 1px; pointer-events: none; text-shadow: 0 2px 4px #000;
+}
+.country-tag {
+  background: #f4f7f4; color: #082126; border: 2px solid #1d7979; border-radius: 8px;
+  padding: 7px 10px; box-shadow: 0 4px 18px #0009; font: 700 12px Arial, sans-serif; white-space: nowrap; transform: translate(-50%, -135%); pointer-events: none;
+}
+.region-tag {
+  background: #1d7979; border: 2px solid #e5f0ed; color: #fff; padding: 6px 10px;
+  border-radius: 14px; font: 700 10px Arial, sans-serif; white-space: nowrap; box-shadow: 0 0 14px #1d797988; cursor: pointer;
+}
+.region-tag:hover { background: #269c9c; transform: scale(1.05); }
 
-/* Regional Gateway Panel Inside Globe Page */
-.panel { display: none; max-width: 900px; margin: 20px auto; padding: 0 15px; }
-.panel.show { display: block; }
-.inner { background: #071c20; border: 1px solid #376766; border-radius: 18px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
-h2 { font: 400 26px Georgia,serif; margin: 5px 0; color: #fff; }
-p { color: #c1d0ce; font-size: 13px; line-height: 1.6; }
-.close { background: transparent; border: 1px solid #527674; color: white; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.close:hover { background: #1d7979; }
-.links { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 15px; }
-.links a { color: #edf5f2; text-decoration: none; background: #10373b; border: 1px solid #2d5b5b; border-radius: 10px; padding: 11px; font-size: 12px; display: block; transition: background 0.2s; }
-.links a:hover { background: #1d7979; }
+/* Sliding Drawer Modal */
+.drawer {
+  position: fixed; top: 0; right: -450px; width: min(420px, 100%); height: 100%;
+  background: #071c20; border-left: 1px solid #376766; z-index: 100;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.7); transition: right 0.3s ease;
+  display: flex; flex-direction: column; padding: 24px; overflow-y: auto;
+}
+.drawer.open { right: 0; }
+.drawer-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #285457; padding-bottom: 12px; }
+.drawer-head h2 { font: 400 24px Georgia, serif; margin: 0; color: #fff; }
+.close-btn { background: transparent; border: 1px solid #527674; color: #fff; border-radius: 50%; width: 34px; height: 34px; font-size: 18px; cursor: pointer; display: grid; place-items: center; }
+.close-btn:hover { background: #1d7979; }
+.drawer p { color: #c1d0ce; font-size: 13px; line-height: 1.6; margin: 0 0 15px; }
+.drawer-links { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.drawer-links a {
+  background: #10373b; border: 1px solid #2d5b5b; color: #edf5f2; text-decoration: none;
+  padding: 12px 14px; border-radius: 12px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;
+}
+.drawer-links a:hover { background: #1d7979; border-color: #79b7ae; }
+.drawer-links span.tag { font-size: 10px; color: #9ccbc4; text-transform: uppercase; letter-spacing: 1px; }
+
+@media(max-width:600px) {
+  .hint { font-size: 9px; bottom: 8px; }
+  #notice { top: 8px; font-size: 10px; }
+  .drawer { width: 100%; right: -100%; }
+}
 </style>
 </head>
 <body>
 
 <div class="stage">
   <div id="loading">Loading Worldwide Art Advocacy 3D Globe…</div>
+  <div id="notice">Drag to rotate · Scroll to zoom · Tap any country or region</div>
   <div id="globeViz"></div>
-  <div class="hint">DRAG TO ROTATE · SCROLL TO ZOOM · CLICK ANY REGION OR COUNTRY</div>
+  <div class="hint">SELECT A REGION OR COUNTRY TO EXPLORE RESOURCES &amp; OPPORTUNITIES</div>
 </div>
 
-<!-- Regional Gateway Panel -->
-<div class="panel" id="panel">
-  <div class="inner">
-    <div class="head">
-      <div>
-        <div style="color:#9ccbc4;text-transform:uppercase;letter-spacing:2px;font-size:10px;font-weight:bold;">Regional art gateway</div>
-        <h2 id="title">Explore a region</h2>
-      </div>
-      <button class="close" id="close">×</button>
+<!-- Sliding Resource Drawer -->
+<div class="drawer" id="resourceDrawer">
+  <div class="drawer-head">
+    <div>
+      <span id="drawerEyebrow" style="color:#9ccbc4;font-size:10px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">Global Art Gateway</span>
+      <h2 id="drawerTitle">Destination</h2>
     </div>
-    <p id="desc"></p>
-    <div class="links" id="links"></div>
+    <button class="close-btn" id="closeDrawer">×</button>
   </div>
+  <p id="drawerDesc">Explore curated art resources, opportunities, and cultural institutions.</p>
+  <div class="drawer-links" id="drawerLinks"></div>
 </div>
 
-<script src="https://unpkg.com/three"></script>
 <script src="https://unpkg.com/globe.gl"></script>
-
 <script>
 (() => {
-  const regions = {
-    "Africa": [1, 20, "Discover African artists, visual traditions, cultural knowledge, and contemporary creative industries across the continent."],
-    "Europe": [52, 15, "Explore Europe's art histories, major institutions, creative communities, and contemporary cross-border opportunities."],
-    "Asia": [28, 90, "Explore diverse artistic traditions, contemporary practices, and rapidly expanding cultural industries across Asia."],
-    "North America": [40, -100, "Discover independent artists, institutions, commercial enterprises, and career opportunities across North America."],
-    "Latin America & Caribbean": [-15, -60, "Explore vibrant regional art scenes, indigenous cultural heritage, and Latin American biennale networks."],
-    "Oceania": [-23, 145, "Discover Indigenous visual art legacies, Pacific creative networks, museums, and contemporary artist collectives."]
+  const loading = document.getElementById("loading");
+  const drawer = document.getElementById("resourceDrawer");
+  const drawerTitle = document.getElementById("drawerTitle");
+  const drawerDesc = document.getElementById("drawerDesc");
+  const drawerLinks = document.getElementById("drawerLinks");
+  const drawerEyebrow = document.getElementById("drawerEyebrow");
+  document.getElementById("closeDrawer").onclick = () => drawer.classList.remove("open");
+
+  // Master URLs mapped from your WAA website
+  const URLS = {
+    contact: "https://worldwideartadvocacy.wordpress.com/contact/",
+    licensing: "https://worldwideartadvocacy.wordpress.com/global-art-hub/art-licensing-copyright-contracts-for-artists-worldwide-art-advocacy/",
+    business: "https://worldwideartadvocacy.wordpress.com/global-art-hub/art-business-resources-for-artists-worldwide-art-advocacy/",
+    growth: "https://worldwideartadvocacy.wordpress.com/global-art-hub/artist-growth-resources-build-your-art-career-worldwide-art-advocacy/",
+    cultures: "https://worldwideartadvocacy.wordpress.com/cultures/",
+    hub: "https://worldwideartadvocacy.wordpress.com/global-art-hub/",
+    africa: "https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8d-african-art-opportunities-artists-culture-resources/",
+    europe: "https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%87%aa%f0%9f%87%ba-european-art-opportunities-artists-museums-resources/",
+    north_america: "https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8e-north-american-art-opportunities-artists-culture-resources/",
+    latin_america: "https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8e-latin-american-caribbean-art-opportunities-worldwide-art-advocacy/",
+    asia: "https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8f-asian-art-opportunities-artists-culture-resources/",
+    oceania: "https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8a-australian-pacific-art-opportunities-artists-culture-resources/",
+    open_calls: "https://worldwideartadvocacy.wordpress.com/global-artist-open-calls-competitions/",
+    residencies: "https://worldwideartadvocacy.wordpress.com/global-art-residencies/",
+    sell_art: "https://worldwideartadvocacy.wordpress.com/where-to-sell-your-art-online-best-online-art-marketplaces/",
+    galleries: "https://worldwideartadvocacy.wordpress.com/global-art-hub/gallery-directory-worldwide-global-galleries-for-artists/",
+    agents: "https://worldwideartadvocacy.wordpress.com/%f0%9f%a4%9d-artist-representatives-art-agents-art-advisors-directory/",
+    commissions: "https://worldwideartadvocacy.wordpress.com/global-art-hub/global-art-commissions-public-art-opportunities-worldwide-art-advocacy/",
+    tips: "https://worldwideartadvocacy.wordpress.com/category/art-tips-and-advice/"
   };
 
-  const categories = [
-    "Artists & Creative Professionals",
-    "Galleries, Museums & Art Spaces",
-    "Traditional & Contemporary Art",
-    "Art Education & Learning",
-    "Exhibitions, Festivals & Biennales",
-    "Residencies, Grants & Open Calls",
-    "Art Markets & Collectors",
-    "Art Services & Professional Support"
+  const regionCenters = [
+    { name: "Africa", lat: 1, lng: 20, urlKey: "africa", desc: "Discover African artists, galleries, cultural heritage, and contemporary art opportunities." },
+    { name: "Europe", lat: 52, lng: 15, urlKey: "europe", desc: "Explore Europe's major art institutions, museums, heritage, and cross-border opportunities." },
+    { name: "Asia", lat: 28, lng: 90, urlKey: "asia", desc: "Discover dynamic contemporary practices, cultural traditions, and art networks across Asia." },
+    { name: "North America", lat: 43, lng: -102, urlKey: "north_america", desc: "Access galleries, artist communities, business resources, and exhibitions across North America." },
+    { name: "Latin America & Caribbean", lat: 5, lng: -68, urlKey: "latin_america", desc: "Explore vibrant regional art scenes, biennales, and indigenous cultural heritage." },
+    { name: "Oceania", lat: -23, lng: 145, urlKey: "oceania", desc: "Discover Indigenous visual art legacies, Pacific creative networks, and museums." }
   ];
 
-  let globe;
+  const centralAmerica = new Set(["Belize", "Costa Rica", "El Salvador", "Guatemala", "Honduras", "Nicaragua", "Panama"]);
+  const caribbean = new Set(["Antigua and Barbuda", "The Bahamas", "Bahamas", "Barbados", "Cuba", "Dominica", "Dominican Republic", "Grenada", "Haiti", "Jamaica", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Trinidad and Tobago"]);
 
-  window.openRegionModal = function(name) {
-    const descText = regions[name] ? regions[name][2] : "Explore art, creative communities, cultural heritage, and institutions across " + name + ".";
-    if (!descText) return;
+  function getCountryName(props) { return props.ADMIN || props.NAME_EN || props.NAME || "Unknown country"; }
 
-    document.getElementById("title").textContent = name;
-    document.getElementById("desc").textContent = descText;
-
-    const linksContainer = document.getElementById("links");
-    linksContainer.innerHTML = "";
-
-    categories.forEach(cat => {
-      const a = document.createElement("a");
-      a.href = "https://worldwideartadvocacy.org/global-art-hub/";
-      a.textContent = cat + " →";
-      a.target = "_parent";
-      linksContainer.appendChild(a);
-    });
-
-    document.getElementById("panel").classList.add("show");
-    if (globe && regions[name]) {
-      globe.pointOfView({ lat: regions[name][0], lng: regions[name][1], altitude: 1.5 }, 1000);
+  function getRegion(props) {
+    const name = getCountryName(props);
+    const sub = (props.SUBREGION || "").toLowerCase();
+    const cont = (props.CONTINENT || "").toLowerCase();
+    if (cont === "south america" || centralAmerica.has(name) || caribbean.has(name) || sub.includes("caribbean") || sub.includes("central america")) {
+      return "Latin America & Caribbean";
     }
-  };
+    if (cont === "north america") return "North America";
+    if (["africa", "europe", "asia", "oceania"].includes(cont)) {
+      return cont.charAt(0).toUpperCase() + cont.slice(1);
+    }
+    return "Africa";
+  }
 
-  document.getElementById("close").onclick = () => {
-    document.getElementById("panel").classList.remove("show");
-  };
+  function openDrawer(title, subtitle, desc, linksArr) {
+    drawerEyebrow.textContent = subtitle;
+    drawerTitle.textContent = title;
+    drawerDesc.textContent = desc;
+    drawerLinks.innerHTML = "";
+    linksArr.forEach(item => {
+      const a = document.createElement("a");
+      a.href = item.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.innerHTML = `<span>${item.label}</span><span class="tag">${item.tag}</span>`;
+      drawerLinks.appendChild(a);
+    });
+    drawer.classList.add("open");
+  }
+
+  if (typeof Globe !== "function") {
+    loading.textContent = "Globe library unavailable. Please check your network connection.";
+    return;
+  }
 
   try {
-    globe = Globe()(document.getElementById("globeViz"))
+    const globe = Globe()(document.getElementById("globeViz"))
+      .backgroundColor("rgba(0,0,0,0)")
       .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
       .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
-      .backgroundColor("rgba(0,0,0,0)")
       .showAtmosphere(true)
       .atmosphereColor("#58bdb5")
-      .atmosphereAltitude(0.18);
+      .atmosphereAltitude(0.16)
+      .polygonAltitude(d => d === window.selectedCountry ? 0.018 : 0.004)
+      .polygonCapColor(d => d === window.selectedCountry ? "rgba(255,190,80,0.78)" : "rgba(29,121,121,0.20)")
+      .polygonSideColor(() => "rgba(20,90,90,0.12)")
+      .polygonStrokeColor(() => "rgba(205,235,228,0.50)")
+      .polygonLabel(d => {
+        const props = d.properties || {};
+        return "<b>" + getCountryName(props) + "</b><br>" + (getRegion(props) || "World");
+      })
+      .onPolygonClick(feature => {
+        window.selectedCountry = feature;
+        const props = feature.properties || {};
+        const country = getCountryName(props);
+        const region = getRegion(props);
+        const regObj = regionCenters.find(r => r.name === region) || regionCenters[0];
+
+        openDrawer(
+          country,
+          region + " Region",
+          `Explore dedicated art resources, galleries, open calls, and cultural initiatives connected with ${country}.`,
+          [
+            { label: "View Regional Art Hub", url: URLS[regObj.urlKey], tag: "Hub" },
+            { label: "Global Open Calls & Competitions", url: URLS.open_calls, tag: "Opportunities" },
+            { label: "International Art Residencies", url: URLS.residencies, tag: "Residencies" },
+            { label: "Worldwide Gallery Directory", url: URLS.galleries, tag: "Galleries" },
+            { label: "Art Agents & Representatives", url: URLS.agents, tag: "Network" },
+            { label: "Public Art & Commissions", url: URLS.commissions, tag: "Commissions" },
+            { label: "Artist Business Resources", url: URLS.business, tag: "Career" }
+          ]
+        );
+      })
+      .htmlElementsData(regionCenters)
+      .htmlLat(d => d.lat)
+      .htmlLng(d => d.lng)
+      .htmlElement(d => {
+        const el = document.createElement("div");
+        el.className = "region-tag";
+        el.textContent = d.name;
+        el.onclick = (e) => {
+          e.stopPropagation();
+          openDrawer(
+            d.name,
+            "Continental Gateway",
+            d.desc,
+            [
+              { label: "Explore " + d.name + " Art Hub", url: URLS[d.urlKey], tag: "Regional Hub" },
+              { label: "Global Art Hub Main Page", url: URLS.hub, tag: "Hub" },
+              { label: "Artist Open Calls & Competitions", url: URLS.open_calls, tag: "Opportunities" },
+              { label: "Global Art Residencies", url: URLS.residencies, tag: "Residencies" },
+              { label: "Where to Sell Art Online", url: URLS.sell_art, tag: "Marketplace" },
+              { label: "Art Licensing & Contracts", url: URLS.licensing, tag: "Legal" },
+              { label: "Art Career Growth Resources", url: URLS.growth, tag: "Growth" }
+            ]
+          );
+        };
+        return el;
+      });
 
     const controls = globe.controls();
     controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.35;
+    controls.autoRotateSpeed = 0.28;
     controls.enableZoom = true;
+    controls.enableDamping = true;
 
-    globe.pointOfView({ lat: 18, lng: 5, altitude: 2.25 });
-
-    // Load Natural Earth Country Boundaries so countries are clickable on the globe
-    fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson')
-      .then(res => res.json())
-      .then(data => {
-        globe.polygonsData(data.features)
-          .polygonAltitude(0.008)
-          .polygonCapColor(() => 'rgba(29,121,121,0.25)')
-          .polygonSideColor(() => 'rgba(70,160,150,0.12)')
-          .polygonStrokeColor(() => 'rgba(156,203,196,0.6)')
-          .onPolygonClick(polygon => {
-            const countryName = polygon.properties.ADMIN || polygon.properties.name || "Selected Territory";
-            window.openRegionModal(countryName);
-          });
-        document.getElementById("loading").style.display = "none";
-      })
-      .catch(() => {
-        document.getElementById("loading").style.display = "none";
-      });
+    globe.pointOfView({ lat: 18, lng: 5, altitude: 2.15 }, 0);
 
     window.addEventListener("resize", () => {
-      globe.width(window.innerWidth);
-      globe.height(460);
+      const el = document.getElementById("globeViz");
+      globe.width(el.clientWidth);
+      globe.height(el.clientHeight);
     });
-  } catch (err) {
-    document.getElementById("loading").textContent = "Globe initialization failed.";
+
+    fetch("https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson")
+      .then(res => res.json())
+      .then(data => {
+        globe.polygonsData(data.features || []);
+        loading.style.display = "none";
+      })
+      .catch(() => { loading.style.display = "none"; });
+
+  } catch(err) {
+    loading.textContent = "Globe initialization failed.";
   }
 })();
 </script>
