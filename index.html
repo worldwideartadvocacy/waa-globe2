@@ -201,8 +201,6 @@ h1 {
   padding: 20px;
 }
 .loading.hidden { display: none; }
-
-/* Country and region labels on the globe */
 .map-label {
   display: inline-block;
   white-space: nowrap;
@@ -231,8 +229,6 @@ h1 {
   pointer-events: auto;
 }
 .region-pin:hover { background: white; }
-
-/* Country information drawer */
 .country-panel {
   display: none;
   max-width: 1000px;
@@ -308,8 +304,6 @@ h1 {
   font-weight: 700;
 }
 .panel-links a:hover { background: #26918d; }
-
-/* Resource section */
 .resources-section {
   max-width: 1150px;
   margin: 58px auto 0;
@@ -397,7 +391,6 @@ h1 {
   text-decoration: none;
 }
 .region-card a:hover { text-decoration: underline; }
-
 .about-strip {
   max-width: 1100px;
   margin: 55px auto 0;
@@ -554,10 +547,6 @@ footer strong { color: var(--cream); }
 (() => {
 "use strict";
 
-/* -------------------------------------------------------
-   WAA RESOURCE LINKS
-   These destinations are kept as supplied.
-------------------------------------------------------- */
 const URLS = {
   contact: "https://worldwideartadvocacy.wordpress.com/contact/",
   hub: "https://worldwideartadvocacy.wordpress.com/global-art-hub/",
@@ -573,9 +562,6 @@ const URLS = {
   europe: "https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%87%aa%f0%9f%87%ba-european-art-opportunities-artists-museums-resources/"
 };
 
-/* -------------------------------------------------------
-   RESOURCE CARDS BELOW THE GLOBE
-------------------------------------------------------- */
 const resources = [
   {
     icon: "🌐",
@@ -662,12 +648,6 @@ regions.forEach(region => {
   regionGrid.appendChild(card);
 });
 
-/* -------------------------------------------------------
-   COUNTRY PROFILES
-   Profiles are concise introductions, not exhaustive
-   inventories. They identify selected traditions and
-   practices associated with each country.
-------------------------------------------------------- */
 const profiles = {
   "nigeria": {
     description:"Nigeria's artistic landscape includes diverse traditions shaped by many peoples and historical centres. Examples include the naturalistic royal arts of Benin Kingdom, Yoruba sculpture and gelede traditions, Igbo uli and mbari practices, Nok terracotta, and a wide-ranging contemporary art scene.",
@@ -911,9 +891,6 @@ const profiles = {
   }
 };
 
-/* -------------------------------------------------------
-   REGION CLASSIFICATION AND MAP UTILITIES
-------------------------------------------------------- */
 const regionCenters = [
   {name:"Africa", lat:1, lng:20, url:URLS.africa},
   {name:"Europe", lat:52, lng:15, url:URLS.europe},
@@ -981,12 +958,10 @@ function getFeatureCenter(feature) {
 
   if (!rings.length) return {lat:0, lng:0};
 
-  // Use the largest outer ring to obtain a stable label location.
   let ring = rings.reduce((best, current) =>
     current.length > best.length ? current : best
   , rings[0]);
 
-  // Spherical averaging avoids most longitude wrap problems.
   let x = 0, y = 0, z = 0, count = 0;
   ring.forEach(point => {
     const lng = Number(point[0]) * Math.PI / 180;
@@ -1012,9 +987,6 @@ function escapeHtml(value) {
   })[char]);
 }
 
-/* -------------------------------------------------------
-   COUNTRY INFORMATION PANEL
-------------------------------------------------------- */
 const panel = document.getElementById("countryPanel");
 const panelTitle = document.getElementById("panelTitle");
 const panelRegion = document.getElementById("panelRegion");
@@ -1070,7 +1042,6 @@ function showCountryInfo(feature) {
   panel.classList.add("visible");
   panel.scrollIntoView({behavior:"smooth", block:"nearest"});
 
-  // Optional integration message for a parent page or embed.
   try {
     window.parent.postMessage({
       type:"WAA_EXPLORER_COUNTRY_SELECTED",
@@ -1084,22 +1055,18 @@ document.getElementById("closePanel").addEventListener("click", () => {
   panel.classList.remove("visible");
 });
 
-/* -------------------------------------------------------
-   GLOBE INITIALISATION
-------------------------------------------------------- */
 const loadingMessage = document.getElementById("loadingMessage");
 const searchStatus = document.getElementById("searchStatus");
 const searchInput = document.getElementById("countrySearch");
 const countryOptions = document.getElementById("countryOptions");
 const searchButton = document.getElementById("searchButton");
+const globeContainer = document.getElementById("globeViz");
 
 let globe = null;
 let worldFeatures = [];
 let selectedCountry = null;
 let hoveredCountry = null;
 let countryLabelPoint = null;
-
-const globeContainer = document.getElementById("globeViz");
 
 function makeGlobeLabel(data) {
   const element = document.createElement("div");
@@ -1177,7 +1144,6 @@ function findCountry(searchTerm) {
   );
   if (exact) return exact;
 
-  // Match common alternative names and spelling variants.
   const aliases = {
     "usa":"united states of america",
     "united states":"united states of america",
@@ -1186,6 +1152,7 @@ function findCountry(searchTerm) {
     "britain":"united kingdom",
     "great britain":"united kingdom",
     "ivory coast":"cote d ivoire",
+    "cote d ivoire":"cote d ivoire",
     "south korea":"south korea",
     "republic of korea":"south korea",
     "north korea":"north korea",
@@ -1260,7 +1227,6 @@ async function initialiseExplorer() {
       throw new Error("The country data was empty.");
     }
 
-    // Populate search suggestions from the actual map dataset.
     const names = worldFeatures
       .map(getCountryName)
       .filter(Boolean)
@@ -1324,7 +1290,6 @@ async function initialiseExplorer() {
     globe.pointOfView({lat:15, lng:10, altitude:2.15}, 0);
     refreshGlobeLabels();
 
-    // Resize the globe when the screen or container changes.
     const resizeGlobe = () => {
       if (globe) {
         const width = globeContainer.clientWidth;
