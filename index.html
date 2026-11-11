@@ -65,29 +65,6 @@ html, body {
   pointer-events: none;
 }
 
-.top-actions {
-  position: absolute;
-  z-index: 7;
-  top: 12px;
-  right: 16px;
-  display: flex;
-  gap: 8px;
-}
-
-.top-btn {
-  background: #0d2b30;
-  border: 1px solid #376766;
-  color: #e5f0ed;
-  border-radius: 20px;
-  padding: 8px 14px;
-  font-size: 11px;
-  text-decoration: none;
-  font-weight: bold;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-  transition: background 0.2s;
-}
-.top-btn:hover { background: #1d7979; }
-
 .hint {
   position: absolute;
   z-index: 6;
@@ -216,8 +193,7 @@ html, body {
 
 @media(max-width:600px) {
   .hint { font-size: 9px; bottom: 8px; }
-  #notice { display: none; }
-  .top-actions { top: 8px; right: 8px; }
+  #notice { top: 8px; font-size: 10px; }
   .bottom-drawer { width: 100%; border-radius: 16px 16px 0 0; max-height: 60vh; padding: 16px; }
 }
 </style>
@@ -233,10 +209,6 @@ html, body {
 
   <div id="notice">
     Drag to rotate · Pinch or scroll to zoom · Tap a country or region
-  </div>
-
-  <div class="top-actions">
-    <a class="top-btn" href="https://worldwideartadvocacy.org/" target="_blank" rel="noopener">Visit WAA ↗</a>
   </div>
 
   <div id="globeViz"></div>
