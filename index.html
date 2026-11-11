@@ -1,534 +1,156 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#061519">
-<title>WAA Global Art Explorer</title>
-
+<title>WAA Global Art Explorer - 3D Globe</title>
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
+body { margin: 0; background: #061519; color: #f4f7f4; font-family: Arial, sans-serif; overflow-x: hidden; }
+.stage { width: 100vw; height: 450px; position: relative; background: radial-gradient(ellipse at 50% 42%, #164247, #071c21 58%, #041014); }
+#globeViz { position: absolute; inset: 0; }
+#loading { position: absolute; top: 40%; width: 100%; text-align: center; color: #b9d2ce; font-size: 14px; z-index: 10; font-family: Georgia, serif; }
+.hint { position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: #a8c3c0; font-size: 11px; pointer-events: none; z-index: 10; }
 
-html, body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #061519;
-  color: #f4f7f4;
-  font-family: Arial, sans-serif;
-}
-
-.stage {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    ellipse at 50% 42%,
-    #164247 0%,
-    #071c21 58%,
-    #041014 100%
-  );
-}
-
-#globeViz {
-  position: absolute;
-  inset: 0;
-}
-
-#loading {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  text-align: center;
-  padding: 24px;
-  color: #b9d2ce;
-  font: 15px Georgia, serif;
-  z-index: 5;
-}
-
-#notice {
-  position: absolute;
-  z-index: 7;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: calc(100% - 24px);
-  padding: 8px 12px;
-  border: 1px solid #376766;
-  border-radius: 20px;
-  background: #061519dd;
-  color: #c9dfda;
-  font-size: 11px;
-  text-align: center;
-  pointer-events: none;
-}
-
-.hint {
-  position: absolute;
-  z-index: 6;
-  bottom: 12px;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  padding: 0 12px;
-  color: #a8c3c0;
-  font-size: 10px;
-  letter-spacing: 1px;
-  pointer-events: none;
-  text-shadow: 0 2px 4px #000;
-}
-
-.country-tag {
-  background: #f4f7f4;
-  color: #082126;
-  border: 2px solid #1d7979;
-  border-radius: 8px;
-  padding: 7px 10px;
-  box-shadow: 0 4px 18px #0009;
-  font: 700 12px Arial, sans-serif;
-  white-space: nowrap;
-  transform: translate(-50%, -135%);
-  pointer-events: none;
-}
-
-.region-tag {
-  background: #1d7979;
-  border: 2px solid #e5f0ed;
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 14px;
-  font: 700 10px Arial, sans-serif;
-  white-space: nowrap;
-  box-shadow: 0 0 14px #1d797988;
-}
-
-@media(max-width:600px) {
-  .hint {
-    font-size: 9px;
-    bottom: 8px;
-  }
-
-  #notice {
-    top: 8px;
-    font-size: 10px;
-  }
-}
+/* Embedded Panel Inside Globe Page */
+.panel { display: none; max-width: 900px; margin: 20px auto; padding: 0 15px; }
+.panel.show { display: block; }
+.inner { background: #071c20; border: 1px solid #376766; border-radius: 18px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+h2 { font: 400 26px Georgia,serif; margin: 5px 0; color: #fff; }
+p { color: #c1d0ce; font-size: 13px; line-height: 1.6; }
+.close { background: transparent; border: 1px solid #527674; color: white; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.links { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 15px; }
+.links a { color: #edf5f2; text-decoration: none; background: #10373b; border: 1px solid #2d5b5b; border-radius: 10px; padding: 11px; font-size: 12px; display: block; transition: background 0.2s; }
+.links a:hover { background: #1d7979; }
 </style>
 </head>
-
 <body>
 
 <div class="stage">
-
-  <div id="loading">
-    Loading the Worldwide Art Advocacy interactive globe…
-  </div>
-
-  <div id="notice">
-    Drag to rotate · Pinch or scroll to zoom · Tap a country to identify it
-  </div>
-
+  <div id="loading">Loading Worldwide Art Advocacy 3D Globe…</div>
   <div id="globeViz"></div>
-
-  <div class="hint">
-    SELECT A COUNTRY TO SEE ITS NAME · SELECT A REGION LABEL TO EXPLORE
-  </div>
-
+  <div class="hint">DRAG TO ROTATE · SCROLL TO ZOOM · CLICK ANY REGION</div>
 </div>
 
-<!-- Globe library -->
+<!-- Regional Gateway Panel -->
+<div class="panel" id="panel">
+  <div class="inner">
+    <div class="head">
+      <div>
+        <div style="color:#9ccbc4;text-transform:uppercase;letter-spacing:2px;font-size:10px;font-weight:bold;">Regional art gateway</div>
+        <h2 id="title">Explore a region</h2>
+      </div>
+      <button class="close" id="close">×</button>
+    </div>
+    <p id="desc"></p>
+    <div class="links" id="links"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/three"></script>
 <script src="https://unpkg.com/globe.gl"></script>
 
 <script>
 (() => {
+  const regions = {
+    "Africa": [1, 20, "Discover African artists, visual traditions, cultural knowledge, and contemporary creative industries across the continent."],
+    "Europe": [52, 15, "Explore Europe's art histories, major institutions, creative communities, and contemporary cross-border opportunities."],
+    "Asia": [28, 90, "Explore diverse artistic traditions, contemporary practices, and rapidly expanding cultural industries across Asia."],
+    "North America": [40, -100, "Discover independent artists, institutions, commercial enterprises, and career opportunities across North America."],
+    "Latin America & Caribbean": [-15, -60, "Explore vibrant regional art scenes, indigenous cultural heritage, and Latin American biennale networks."],
+    "Oceania": [-23, 145, "Discover Indigenous visual art legacies, Pacific creative networks, museums, and contemporary artist collectives."]
+  };
 
-  const loading = document.getElementById("loading");
-
-  // Selection variables are initialized before globe callbacks.
-  let selectedCountry = null;
-  let selectedCountryLabel = null;
-
-  // Six regional destinations.
-  const regionCenters = [
-    { name: "Africa", lat: 1, lng: 20 },
-    { name: "Europe", lat: 52, lng: 15 },
-    { name: "Asia", lat: 28, lng: 90 },
-    { name: "North America", lat: 43, lng: -102 },
-    { name: "Latin America & Caribbean", lat: 5, lng: -68 },
-    { name: "Oceania", lat: -23, lng: 145 }
+  const categories = [
+    "Artists & Creative Professionals",
+    "Galleries, Museums & Art Spaces",
+    "Traditional & Contemporary Art",
+    "Art Education & Learning",
+    "Exhibitions, Festivals & Biennales",
+    "Residencies, Grants & Open Calls",
+    "Art Markets & Collectors",
+    "Art Services & Professional Support"
   ];
 
-  const centralAmerica = new Set([
-    "Belize",
-    "Costa Rica",
-    "El Salvador",
-    "Guatemala",
-    "Honduras",
-    "Nicaragua",
-    "Panama"
-  ]);
+  let globe;
 
-  const caribbean = new Set([
-    "Antigua and Barbuda",
-    "The Bahamas",
-    "Bahamas",
-    "Barbados",
-    "Cuba",
-    "Dominica",
-    "Dominican Republic",
-    "Grenada",
-    "Haiti",
-    "Jamaica",
-    "Saint Kitts and Nevis",
-    "Saint Lucia",
-    "Saint Vincent and the Grenadines",
-    "Trinidad and Tobago"
-  ]);
+  window.openRegionModal = function(name) {
+    const descText = regions[name] ? regions[name][2] : "";
+    if (!descText) return;
 
-  // Read the country name from the map data.
-  function getCountryName(properties) {
-    return properties.ADMIN ||
-           properties.NAME_EN ||
-           properties.NAME ||
-           "Unknown country";
-  }
+    document.getElementById("title").textContent = name;
+    document.getElementById("desc").textContent = descText;
 
-  // Determine the regional destination of a country.
-  function getRegion(properties) {
+    const linksContainer = document.getElementById("links");
+    linksContainer.innerHTML = "";
 
-    const name = getCountryName(properties);
+    categories.forEach(cat => {
+      const a = document.createElement("a");
+      a.href = "https://worldwideartadvocacy.wordpress.com/global-art-hub/";
+      a.textContent = cat + " →";
+      a.target = "_parent"; // Opens in the main site window
+      linksContainer.appendChild(a);
+    });
 
-    const subregion =
-      (properties.SUBREGION || "").toLowerCase();
-
-    const continent =
-      (properties.CONTINENT || "").toLowerCase();
-
-    if (
-      continent === "south america" ||
-      centralAmerica.has(name) ||
-      caribbean.has(name) ||
-      subregion === "caribbean" ||
-      subregion === "central america"
-    ) {
-      return "Latin America & Caribbean";
+    document.getElementById("panel").classList.add("show");
+    if (globe && regions[name]) {
+      globe.pointOfView({ lat: regions[name][0], lng: regions[name][1], altitude: 1.5 }, 1000);
     }
+  };
 
-    if (continent === "north america") {
-      return "North America";
-    }
-
-    if (
-      ["africa", "europe", "asia", "oceania"]
-      .includes(continent)
-    ) {
-      return continent.charAt(0).toUpperCase() +
-             continent.slice(1);
-    }
-
-    return null;
-  }
-
-  // Send selections to the WordPress page containing the iframe.
-  function notifyParent(type, payload) {
-
-    if (window.parent !== window) {
-      window.parent.postMessage(
-        { type, ...payload },
-        "*"
-      );
-    }
-  }
-
-  // Check whether the globe library loaded.
-  if (typeof Globe !== "function") {
-
-    loading.textContent =
-      "The globe library could not load. Check your internet connection and reload.";
-
-    return;
-  }
+  document.getElementById("close").onclick = () => {
+    document.getElementById("panel").classList.remove("show");
+  };
 
   try {
+    const globeData = Object.keys(regions).map(key => ({
+      name: key,
+      lat: regions[key][0],
+      lng: regions[key][1]
+    }));
 
-    const globe = Globe()(
-      document.getElementById("globeViz")
-    )
-
+    globe = Globe()(document.getElementById("globeViz"))
+      .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
+      .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
       .backgroundColor("rgba(0,0,0,0)")
-
-      .globeImageUrl(
-        "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-      )
-
-      .bumpImageUrl(
-        "https://unpkg.com/three-globe/example/img/earth-topology.png"
-      )
-
       .showAtmosphere(true)
-
       .atmosphereColor("#58bdb5")
-
-      .atmosphereAltitude(0.16)
-
-      // Country appearance.
-      .polygonAltitude(d =>
-        d === selectedCountry ? 0.018 : 0.004
-      )
-
-      .polygonCapColor(d =>
-        d === selectedCountry
-          ? "rgba(255,190,80,0.78)"
-          : "rgba(29,121,121,0.20)"
-      )
-
-      .polygonSideColor(() =>
-        "rgba(20,90,90,0.12)"
-      )
-
-      .polygonStrokeColor(() =>
-        "rgba(205,235,228,0.50)"
-      )
-
-      // Show country name when a user hovers over a country.
-      .polygonLabel(d => {
-
-        const properties = d.properties || {};
-
-        return (
-          "<b>" +
-          getCountryName(properties) +
-          "</b><br>" +
-          (getRegion(properties) || "World")
-        );
-
-      })
-
-      // COUNTRY CLICK EVENT.
-      .onPolygonClick((feature, event, coordinates) => {
-
-        const properties = feature.properties || {};
-
-        const country = getCountryName(properties);
-
-        const region = getRegion(properties);
-
-        // Highlight the selected country.
-        selectedCountry = feature;
-
-        // Capture the position where the country was clicked.
-        const point = coordinates || {
-          lat: 0,
-          lng: 0
-        };
-
-        // Prepare the country-name popup.
-        selectedCountryLabel = {
-          kind: "country",
-          name: country,
-          lat: point.lat,
-          lng: point.lng
-        };
-
-        // Preserve the six regional labels.
-        // Add the selected country's name.
-        globe.htmlElementsData([
-          ...regionCenters.map(region => ({
-            ...region,
-            kind: "region"
-          })),
-          selectedCountryLabel
-        ]);
-
-        // Refresh country highlighting.
-        globe
-          .polygonCapColor(d =>
-            d === selectedCountry
-              ? "rgba(255,190,80,0.78)"
-              : "rgba(29,121,121,0.20)"
-          )
-          .polygonAltitude(d =>
-            d === selectedCountry ? 0.018 : 0.004
-          );
-
-        // Send country and region information to WordPress.
-        notifyParent("WAA_COUNTRY_SELECT", {
-          country: country,
-          region: region
-        });
-
-        if (region) {
-          notifyParent("WAA_REGION_SELECT", {
-            region: region,
-            country: country
-          });
-        }
-
-      })
-
-      // Six clickable regional markers.
-      .htmlElementsData(
-        regionCenters.map(region => ({
-          ...region,
-          kind: "region"
-        }))
-      )
-
+      .atmosphereAltitude(0.18)
+      .htmlElementsData(globeData)
       .htmlLat(d => d.lat)
-
       .htmlLng(d => d.lng)
-
       .htmlElement(d => {
-
-        const element = document.createElement("div");
-
-        if (d.kind === "country") {
-
-          element.className = "country-tag";
-
-          element.textContent = d.name;
-
-        } else {
-
-          element.className = "region-tag";
-
-          element.textContent = d.name;
-
-          element.style.cursor = "pointer";
-
-          element.setAttribute("role", "button");
-
-          element.setAttribute("tabindex", "0");
-
-          const activate = () => {
-
-            notifyParent("WAA_REGION_SELECT", {
-              region: d.name
-            });
-
-          };
-
-          element.addEventListener("click", event => {
-
-            event.stopPropagation();
-
-            activate();
-
-          });
-
-          element.addEventListener("keydown", event => {
-
-            if (
-              event.key === "Enter" ||
-              event.key === " "
-            ) {
-
-              event.preventDefault();
-
-              activate();
-
-            }
-
-          });
-
-        }
-
-        return element;
-
-      })
-
-      .polygonsTransitionDuration(250);
-
-
-    // Globe movement and zoom.
-    const controls = globe.controls();
-
-    controls.autoRotate = true;
-
-    controls.autoRotateSpeed = 0.28;
-
-    controls.enableZoom = true;
-
-    controls.enableDamping = true;
-
-    globe.pointOfView(
-      { lat: 18, lng: 5, altitude: 2.15 },
-      0
-    );
-
-
-    // Responsive resizing.
-    function resizeGlobe() {
-
-      const container =
-        document.getElementById("globeViz");
-
-      globe.width(container.clientWidth);
-
-      globe.height(container.clientHeight);
-
-    }
-
-    window.addEventListener("resize", resizeGlobe);
-
-    resizeGlobe();
-
-
-    // Load real country boundaries.
-    fetch(
-      "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson"
-    )
-
-      .then(response => {
-
-        if (!response.ok) {
-          throw new Error("Country boundaries unavailable");
-        }
-
-        return response.json();
-
-      })
-
-      .then(data => {
-
-        const countries = (data.features || [])
-          .filter(country =>
-            getRegion(country.properties || {})
-          );
-
-        globe.polygonsData(countries);
-
-        loading.style.display = "none";
-
-      })
-
-      .catch(error => {
-
-        loading.textContent =
-          "The globe is ready, but country boundaries could not load. Please reload when your connection is stable.";
-
-        console.error(error);
-
+        const el = document.createElement('button');
+        el.innerHTML = `<div style="background:#1d7979;border:2px solid #e5f0ed;color:#fff;padding:6px 12px;border-radius:14px;font-size:11px;font-weight:bold;cursor:pointer;box-shadow:0 0 15px rgba(29,121,121,0.9);white-space:nowrap;font-family:Arial,sans-serif;">${d.name}</div>`;
+        el.style.transform = 'translate(-50%, -50px)';
+        el.style.border = 'none';
+        el.style.background = 'transparent';
+        el.style.padding = '0';
+        
+        el.onclick = (e) => {
+          e.stopPropagation();
+          window.openRegionModal(d.name);
+        };
+        return el;
       });
 
+    const controls = globe.controls();
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.35;
+    controls.enableZoom = true;
+
+    globe.pointOfView({ lat: 18, lng: 5, altitude: 2.25 });
+    document.getElementById("loading").style.display = "none";
+
+    window.addEventListener("resize", () => {
+      globe.width(window.innerWidth);
+      globe.height(450);
+    });
+  } catch (err) {
+    document.getElementById("loading").textContent = "Globe initialization failed.";
   }
-
-  catch(error) {
-
-    loading.textContent =
-      "The globe could not start. Please reload or check your internet connection.";
-
-    console.error(error);
-
-  }
-
 })();
 </script>
-
 </body>
 </html>
