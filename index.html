@@ -1,1149 +1,483 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#061519">
-<meta name="description" content="Discover artists, art forms, cultures, institutions and opportunities around the world with the WAA Global Art Explorer.">
 <title>WAA Global Art Explorer</title>
 
 <style>
-:root{--bg:#061519;--panel:#0a2226;--panel2:#10373b;--line:#285457;--teal:#1d7979;--mint:#9ccbc4;--ink:#f4f7f4;--muted:#b4c7c4;--soft:#789391;--gold:#d7b978;--danger:#e6a49a;--radius:18px;--shadow:0 18px 55px #0005}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:radial-gradient(ellipse at 50% 0%,#12373b 0,#071b20 45%,#041014 100%);color:var(--ink);font-family:Inter,Arial,sans-serif;min-height:100vh}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-.wrap{max-width:1220px;margin:auto;padding:0 22px}
-header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:23px 0}
-.brand{font-weight:800;letter-spacing:2px;font-size:14px}
-.brand small{display:block;color:var(--mint);font-size:9px;letter-spacing:1.6px;margin-top:6px}
-.header-right{display:flex;gap:9px;align-items:center}
-.pill{border:1px solid #477574;border-radius:30px;padding:9px 13px;font-size:10px;letter-spacing:1px;color:#d8e8e4}
-.navlink,.ghost{border:1px solid var(--line);border-radius:30px;background:#0d2b30;color:var(--ink);padding:10px 14px;text-decoration:none;font-size:12px}
-.hero{text-align:center;padding:44px 0 22px}
-.eyebrow{color:var(--mint);font-size:10px;letter-spacing:3px;text-transform:uppercase;font-weight:700}
-.hero h1{font:400 clamp(39px,6vw,68px)/1.04 Georgia,serif;margin:17px 0 14px}
-.hero p{max-width:720px;margin:0 auto;color:#c1d0ce;font-size:15px;line-height:1.7}
-.searchbox{max-width:900px;margin:28px auto 0;background:#f7fbf9;border-radius:15px;padding:7px;display:flex;gap:8px;box-shadow:var(--shadow)}
-.searchbox input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#173b3b;padding:13px 15px;font-size:15px}
-.searchbox input::placeholder{color:#718582}
-.primary{border:0;border-radius:11px;background:var(--teal);color:white;padding:13px 20px;font-weight:700}
-.search-meta{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:13px auto 0;color:var(--soft);font-size:11px}
-.quick{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-top:12px}
-.chip{border:1px solid #315e60;background:#0d2b30;color:#c8ded9;border-radius:30px;padding:7px 11px;font-size:11px}
-.section{padding:30px 0}
-.section-head{display:flex;align-items:end;justify-content:space-between;gap:15px;margin-bottom:16px}
-.section-head h2{font:400 30px Georgia,serif;margin:6px 0 0}
-.section-head p{color:var(--muted);font-size:12px;margin:5px 0 0}
-.globe-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,.85fr);gap:16px}
-.globe-card,.side-card,.content-card{background:linear-gradient(145deg,#0b2529,#07191d);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
-.globe-card{min-height:440px;position:relative;overflow:hidden}
-.globe-head{position:absolute;z-index:2;top:17px;left:19px;right:19px;display:flex;justify-content:space-between;gap:12px;pointer-events:none}
-.globe-head span{font-size:10px;color:var(--mint);letter-spacing:1.4px}
-.globe-stage{height:440px;position:relative}
-.globe-stage #globe{position:absolute;inset:0}
-.globe-fallback{height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:50px 25px;text-align:center;color:var(--muted)}
-.globe-fallback strong{font:30px Georgia,serif;color:var(--ink)}
-.globe-fallback p{max-width:400px;font-size:13px;line-height:1.6}
-.globe-fallback .earth{font-size:100px;filter:drop-shadow(0 0 30px #43aaa080)}
-.globe-tip{position:absolute;bottom:13px;left:0;right:0;text-align:center;color:#9ab6b1;font-size:10px;pointer-events:none}
-.side-card{padding:20px;display:flex;flex-direction:column;gap:13px}
-.side-card h3{font:26px Georgia,serif;margin:0}
-.side-card p{font-size:13px;line-height:1.6;color:var(--muted);margin:0}
-.fieldlabel{font-size:10px;color:var(--mint);letter-spacing:1.5px;text-transform:uppercase;font-weight:700}
-.select{width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:#0d2b30;color:var(--ink);outline:none}
-.region-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
-.region-btn{background:#10373b;border:1px solid #376766;color:#e5f0ed;border-radius:10px;padding:10px 8px;font-size:11px}
-.region-btn.active,.region-btn:hover,.chip:hover{background:#1d7979;border-color:#79b7ae}
-.country-info{border-top:1px solid var(--line);padding-top:13px;display:none}
-.country-info.show{display:block}
-.country-info h4{font:22px Georgia,serif;margin:0 0 5px}
-.country-info p{font-size:12px}
-.category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.category{border:1px solid var(--line);background:#0a2226;border-radius:14px;padding:17px 14px;text-align:left;color:var(--ink);min-height:112px;transition:.2s}
-.category:hover,.category.active{background:#10373b;border-color:#6da9a3;transform:translateY(-2px)}
-.category .ico{font-size:21px;display:block;margin-bottom:10px}
-.category strong{display:block;font-size:13px}
-.category small{display:block;color:var(--muted);font-size:10px;line-height:1.45;margin-top:5px}
+* { box-sizing: border-box; }
 
-/* Enhanced Country Info Panel Styling & Action Links */
-.country-links{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-.country-links a{
-background:#10373b;border:1px solid #2d5b5b;color:#edf5f2;text-decoration:none;
-padding:9px 11px;border-radius:8px;font-size:11px;display:flex;justify-content:space-between;align-items:center;transition:background 0.2s
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #061519;
+  color: #f4f7f4;
+  font-family: Arial, sans-serif;
 }
-.country-links a:hover{background:#1d7979;border-color:#79b7ae}
-.country-links span.tag{font-size:8px;color:#9ccbc4;text-transform:uppercase;letter-spacing:1px}
 
-.filters{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:9px;margin:15px 0}
-.filters input,.filters select{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:#0a2226;color:var(--ink);outline:none;font-size:12px}
-.results-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:13px 0;color:var(--muted);font-size:12px}
-.results{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.result{background:#0a2226;border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:9px;min-height:180px}
-.result .tag{color:var(--mint);font-size:9px;letter-spacing:1.2px;text-transform:uppercase}
-.result h3{font:22px Georgia,serif;margin:0}
-.result p{font-size:12px;line-height:1.55;color:var(--muted);margin:0;flex:1}
-.result-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:10px;color:var(--soft)}
-.result a{color:#b8e0d8;text-decoration:none}
-.result a:hover{text-decoration:underline}
-.empty{grid-column:1/-1;text-align:center;padding:35px 20px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-size:13px;line-height:1.6}
-.toolbar{display:flex;gap:8px;flex-wrap:wrap}
-.smallbtn{border:1px solid var(--line);background:#10373b;color:#e7f1ed;border-radius:9px;padding:9px 11px;font-size:11px}
-.smallbtn:hover{background:#1d7979}
-.note{font-size:11px;color:var(--soft);line-height:1.6}
-.footer{border-top:1px solid #234347;margin-top:35px;padding:23px 0 30px;color:#789391;font-size:10px;letter-spacing:1px;text-align:center}
-.footer a{color:#9ccbc4;text-decoration:none}
-.modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:18px;z-index:10}
-.modal.show{display:flex}
-.modalbox{width:min(600px,100%);max-height:90vh;overflow:auto;background:#0a2226;border:1px solid #477574;border-radius:18px;padding:22px;box-shadow:var(--shadow)}
-.modalbox h2{font:29px Georgia,serif;margin:0 0 6px}
-.modalbox>p{color:var(--muted);font-size:12px;line-height:1.6}
-.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.formfield{display:flex;flex-direction:column;gap:6px}
-.formfield.full{grid-column:1/-1}
-.formfield label{font-size:10px;color:var(--mint);text-transform:uppercase;letter-spacing:1px}
-.formfield input,.formfield select,.formfield textarea{width:100%;padding:11px;border:1px solid var(--line);background:#07191d;color:var(--ink);border-radius:9px;outline:none}
-.formfield textarea{min-height:75px;resize:vertical}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}
-.status{position:fixed;bottom:15px;left:50%;transform:translateX(-50%);background:#eaf6f1;color:#123b38;border-radius:30px;padding:10px 15px;font-size:12px;box-shadow:var(--shadow);display:none;z-index:20;max-width:90%;text-align:center}
-.status.show{display:block}
-.hide{display:none!important}
-
-@media(max-width:850px){
-.globe-layout{grid-template-columns:1fr}
-.side-card{display:grid;grid-template-columns:1fr 1fr}
-.side-card h3,.side-card>p,.country-info{grid-column:1/-1}
-.category-grid{grid-template-columns:repeat(2,1fr)}
-.results{grid-template-columns:repeat(2,1fr)}
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    ellipse at 50% 42%,
+    #164247 0%,
+    #071c21 58%,
+    #041014 100%
+  );
 }
-@media(max-width:560px){
-.wrap{padding:0 14px}
-header{padding:17px 0}
-.pill{display:none}
-.hero{padding-top:28px}
-.hero p{font-size:13px}
-.searchbox{flex-direction:column}
-.searchbox input{padding:13px}
-.searchbox .primary{width:100%}
-.section{padding:23px 0}
-.section-head h2{font-size:26px}
-.globe-card,.globe-stage{min-height:330px;height:350px}
-.side-card{display:flex}
-.category-grid{gap:7px}
-.category{padding:13px 10px;min-height:105px}
-.category strong{font-size:12px}
-.filters{grid-template-columns:1fr 1fr}
-.filters input{grid-column:1/-1}
-.results{grid-template-columns:1fr}
-.formgrid{grid-template-columns:1fr}
-.formfield.full{grid-column:auto}
-.header-right .navlink{font-size:10px;padding:9px 10px}
+
+#globeViz {
+  position: absolute;
+  inset: 0;
+}
+
+#loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 24px;
+  color: #b9d2ce;
+  font: 15px Georgia, serif;
+  z-index: 5;
+}
+
+#notice {
+  position: absolute;
+  z-index: 7;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100% - 24px);
+  padding: 8px 12px;
+  border: 1px solid #376766;
+  border-radius: 20px;
+  background: #061519dd;
+  color: #c9dfda;
+  font-size: 11px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.top-actions {
+  position: absolute;
+  z-index: 7;
+  top: 12px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.top-btn {
+  background: #0d2b30;
+  border: 1px solid #376766;
+  color: #e5f0ed;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 11px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  transition: background 0.2s;
+}
+.top-btn:hover { background: #1d7979; }
+
+.hint {
+  position: absolute;
+  z-index: 6;
+  bottom: 12px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding: 0 12px;
+  color: #a8c3c0;
+  font-size: 10px;
+  letter-spacing: 1px;
+  pointer-events: none;
+  text-shadow: 0 2px 4px #000;
+}
+
+.country-tag {
+  background: #f4f7f4;
+  color: #082126;
+  border: 2px solid #1d7979;
+  border-radius: 8px;
+  padding: 7px 10px;
+  box-shadow: 0 4px 18px #0009;
+  font: 700 12px Arial, sans-serif;
+  white-space: nowrap;
+  transform: translate(-50%, -135%);
+  pointer-events: none;
+}
+
+.region-tag {
+  background: #1d7979;
+  border: 2px solid #e5f0ed;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 14px;
+  font: 700 10px Arial, sans-serif;
+  white-space: nowrap;
+  box-shadow: 0 0 14px #1d797988;
+  cursor: pointer;
+}
+.region-tag:hover { background: #269c9c; transform: scale(1.05); }
+
+/* Bottom Slide-Up Card Panel */
+.bottom-drawer {
+  position: absolute;
+  bottom: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(720px, calc(100% - 24px));
+  max-height: 52vh;
+  background: #071c20ee;
+  backdrop-filter: blur(10px);
+  border: 1px solid #376766;
+  border-bottom: none;
+  border-radius: 20px 20px 0 0;
+  z-index: 20;
+  box-shadow: 0 -10px 35px rgba(0,0,0,0.7);
+  transition: bottom 0.35s cubic-bezier(0.1, 0.9, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 22px;
+  overflow-y: auto;
+}
+.bottom-drawer.open {
+  bottom: 0;
+}
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #285457;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+.drawer-header h3 {
+  font: 400 22px Georgia, serif;
+  margin: 0 0 4px 0;
+  color: #fff;
+}
+.close-drawer {
+  background: transparent;
+  border: 1px solid #527674;
+  color: #fff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.close-drawer:hover { background: #1d7979; }
+.drawer-body p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #c1d0ce;
+  margin: 0 0 14px 0;
+}
+.drawer-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 8px;
+}
+.drawer-links a {
+  background: #10373b;
+  border: 1px solid #2d5b5b;
+  color: #edf5f2;
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s;
+}
+.drawer-links a:hover {
+  background: #1d7979;
+  border-color: #79b7ae;
+}
+.drawer-links span.tag {
+  font-size: 9px;
+  color: #9ccbc4;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@media(max-width:600px) {
+  .hint { font-size: 9px; bottom: 8px; }
+  #notice { display: none; }
+  .top-actions { top: 8px; right: 8px; }
+  .bottom-drawer { width: 100%; border-radius: 16px 16px 0 0; max-height: 60vh; padding: 16px; }
 }
 </style>
 </head>
 
 <body>
-<div class="wrap">
 
-<header>
-<div class="brand">WAA GLOBAL ART EXPLORER<small>DISCOVER ART · EXPLORE CULTURES · CONNECT THE WORLD</small></div>
-<div class="header-right">
-<span class="pill">INDEPENDENT DISCOVERY PORTAL · V1</span>
-<a class="navlink" href="https://worldwideartadvocacy.org/" target="_blank" rel="noopener">Visit WAA ↗</a>
-<a class="ghost" href="https://worldwideartadvocacy.wordpress.com/contact/" target="_blank" rel="noopener">Contact Us</a>
-</div>
-</header>
+<div class="stage">
 
-<section class="hero">
-<div class="eyebrow">One world · Many creative voices</div>
-<h1>The World of Art,<br>One Search Away.</h1>
-<p>Explore artists, artworks, cultures, galleries, museums, education, exhibitions and opportunities across countries and regions.</p>
-<div class="searchbox">
-<input id="globalSearch" type="search" placeholder="Search artists, art forms, countries, galleries, opportunities…" aria-label="Search the Global Art Explorer">
-<button class="primary" id="searchBtn">Search Explorer</button>
-</div>
-<div class="search-meta">Try a topic, country, art form or organisation</div>
-<div class="quick">
-<button class="chip" data-query="Nigeria">Nigeria</button>
-<button class="chip" data-query="Sculpture">Sculpture</button>
-<button class="chip" data-query="Galleries">Galleries</button>
-<button class="chip" data-query="Residencies">Residencies</button>
-<button class="chip" data-query="Cultural heritage">Cultural heritage</button>
-</div>
-</section>
+  <div id="loading">
+    Loading the Worldwide Art Advocacy interactive globe…
+  </div>
 
-<!-- Cards Section for Core WAA Resources -->
-<section class="section" style="padding-top:10px;padding-bottom:10px;">
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;">
-<a href="https://worldwideartadvocacy.wordpress.com/global-art-hub/art-licensing-copyright-contracts-for-artists-worldwide-art-advocacy/" target="_blank" rel="noopener" style="background:#0a2226;border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-decoration:none;color:inherit;display:block;transition:.2s;" onmouseover="this.style.background='#10373b';this.style.borderColor='#6da9a3'" onmouseout="this.style.background='#0a2226';this.style.borderColor='#285457'">
-<div class="eyebrow" style="margin-bottom:6px">Legal & Protection</div>
-<h3 style="font:20px Georgia,serif;margin:0 0 6px">Art Licensing & Copyright</h3>
-<p style="color:var(--muted);font-size:12px;margin:0;line-height:1.5">Essential contracts and legal frameworks for working artists worldwide.</p>
-</a>
-<a href="https://worldwideartadvocacy.wordpress.com/global-art-hub/art-business-resources-for-artists-worldwide-art-advocacy/" target="_blank" rel="noopener" style="background:#0a2226;border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-decoration:none;color:inherit;display:block;transition:.2s;" onmouseover="this.style.background='#10373b';this.style.borderColor='#6da9a3'" onmouseout="this.style.background='#0a2226';this.style.borderColor='#285457'">
-<div class="eyebrow" style="margin-bottom:6px">Professional Enterprise</div>
-<h3 style="font:20px Georgia,serif;margin:0 0 6px">Art Business Resources</h3>
-<p style="color:var(--muted);font-size:12px;margin:0;line-height:1.5">Strategies, pricing, and business management guides for creative enterprises.</p>
-</a>
-<a href="https://worldwideartadvocacy.wordpress.com/global-art-hub/artist-growth-resources-build-your-art-career-worldwide-art-advocacy/" target="_blank" rel="noopener" style="background:#0a2226;border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-decoration:none;color:inherit;display:block;transition:.2s;" onmouseover="this.style.background='#10373b';this.style.borderColor='#6da9a3'" onmouseout="this.style.background='#0a2226';this.style.borderColor='#285457'">
-<div class="eyebrow" style="margin-bottom:6px">Professional Development</div>
-<h3 style="font:20px Georgia,serif;margin:0 0 6px">Artist Growth & Career</h3>
-<p style="color:var(--muted);font-size:12px;margin:0;line-height:1.5">Build your art career with specialized mentorship and portfolio guidance.</p>
-</a>
-<a href="https://worldwideartadvocacy.wordpress.com/cultures/" target="_blank" rel="noopener" style="background:#0a2226;border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-decoration:none;color:inherit;display:block;transition:.2s;" onmouseover="this.style.background='#10373b';this.style.borderColor='#6da9a3'" onmouseout="this.style.background='#0a2226';this.style.borderColor='#285457'">
-<div class="eyebrow" style="margin-bottom:6px">Heritage & Preservation</div>
-<h3 style="font:20px Georgia,serif;margin:0 0 6px">Cultures & Heritage</h3>
-<p style="color:var(--muted);font-size:12px;margin:0;line-height:1.5">Preserving traditions, artistic histories, and cultural identity globally.</p>
-</a>
-</div>
-<div style="text-align:center;margin-top:20px;">
-<a class="primary" style="text-decoration:none;display:inline-block;padding:12px 28px;" href="https://worldwideartadvocacy.org/global-art-hub/" target="_blank" rel="noopener">Explore WAA Global Art Hub ↗</a>
-</div>
-</section>
+  <div id="notice">
+    Drag to rotate · Pinch or scroll to zoom · Tap a country or region
+  </div>
 
-<section class="section" id="world">
-<div class="section-head">
-<div>
-<div class="eyebrow">Explore geographically</div>
-<h2>Navigate the world</h2>
-<p>Choose a continent, search for a country or select a country on the globe.</p>
-</div>
-<span class="pill">WORLD → REGION → COUNTRY</span>
+  <div class="top-actions">
+    <a class="top-btn" href="https://worldwideartadvocacy.org/" target="_blank" rel="noopener">Visit WAA ↗</a>
+  </div>
+
+  <div id="globeViz"></div>
+
+  <div class="hint">
+    SELECT A COUNTRY OR REGION TO EXPLORE ARTWORKS, RESOURCES &amp; OPPORTUNITIES
+  </div>
+
 </div>
 
-<div class="globe-layout">
-<div class="globe-card">
-<div class="globe-head">
-<span>INTERACTIVE WORLD GLOBE</span>
-<span>ROTATE · ZOOM · SELECT</span>
-</div>
-<div class="globe-stage">
-<div id="globe"></div>
-<div class="globe-fallback" id="globeFallback">
-<div class="earth">🌍</div>
-<strong>Explore every corner of the world</strong>
-<p>The interactive globe is loading. You can already use the continent and country selectors alongside it.</p>
-</div>
-</div>
-<div class="globe-tip">Drag to rotate · Scroll or pinch to zoom · Select a country</div>
+<!-- Bottom Slide-Up Drawer Card -->
+<div class="bottom-drawer" id="bottomDrawer">
+  <div class="drawer-header">
+    <div>
+      <span id="drawerSubtitle" style="color:#9ccbc4;font-size:10px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">Global Art Destination</span>
+      <h3 id="drawerTitle">Country Name</h3>
+    </div>
+    <button class="close-drawer" id="closeDrawer">×</button>
+  </div>
+  <div class="drawer-body">
+    <p id="drawerDesc">Loading regional artwork profiles and professional opportunities...</p>
+    <div class="drawer-links" id="drawerLinks"></div>
+  </div>
 </div>
 
-<aside class="side-card">
-<div>
-<div class="fieldlabel">Select a continent</div>
-<div class="region-grid" id="regionButtons" style="margin-top:9px"></div>
-</div>
-<div>
-<div class="fieldlabel">Find a country</div>
-<select id="countrySelect" class="select" style="margin-top:9px">
-<option value="">Choose a country or territory</option>
-</select>
-</div>
-<div class="country-info" id="countryInfo">
-<div class="fieldlabel">Selected destination</div>
-<h4 id="countryName">Explore a country</h4>
-<p id="countryDesc">Select a country to explore its art ecosystem.</p>
-<div class="country-links" id="countryActionLinks"></div>
-<div class="toolbar" style="margin-top:10px">
-<button class="smallbtn" id="countrySearch">Explore in directory</button>
-<button class="smallbtn" id="clearCountry">Clear</button>
-</div>
-</div>
-<p class="note">Country boundaries and labels are provided by Natural Earth geographic data. The Explorer's art listings are a separate curated directory.</p>
-</aside>
-</div>
-</section>
-
-<section class="section" id="categories">
-<div class="section-head">
-<div>
-<div class="eyebrow">Browse by subject</div>
-<h2>Explore art by category</h2>
-<p>Choose an area of interest to narrow the global directory.</p>
-</div>
-</div>
-<div class="category-grid" id="categoryGrid"></div>
-</section>
-
-<section class="section" id="directory">
-<div class="section-head">
-<div>
-<div class="eyebrow">Searchable discovery directory</div>
-<h2>Discover resources</h2>
-<p>Search and filter the directory. New entries can be added to your local working dataset.</p>
-</div>
-<div class="toolbar">
-<button class="smallbtn" id="addEntry">＋ Add resource</button>
-<button class="smallbtn" id="exportData">Export JSON</button>
-<button class="smallbtn" id="importData">Import JSON</button>
-<input id="importFile" type="file" accept="application/json,.json" class="hide">
-</div>
-</div>
-
-<div class="filters">
-<input id="filterSearch" type="search" placeholder="Search directory…">
-<select id="filterRegion"><option value="">All continents</option></select>
-<select id="filterCategory"><option value="">All categories</option></select>
-<select id="filterType">
-<option value="">All resource types</option>
-<option>Artist</option>
-<option>Artwork / Art form</option>
-<option>Gallery / Museum</option>
-<option>Culture / Heritage</option>
-<option>Event / Exhibition</option>
-<option>Education / Research</option>
-<option>Opportunity</option>
-<option>Art business / Service</option>
-<option>WAA resource</option>
-</select>
-</div>
-
-<div class="results-top">
-<span id="resultCount">Loading directory…</span>
-<button class="smallbtn" id="resetFilters">Reset filters</button>
-</div>
-<div class="results" id="results"></div>
-<p class="note" style="margin-top:13px">Directory integrity: entries added here are saved in this browser only. Export your JSON to back up or move the dataset. A shared, multi-user database and live submissions require a connected backend in a later phase.</p>
-</section>
-
-<footer class="footer">
-WAA GLOBAL ART EXPLORER · AN INDEPENDENT DISCOVERY PORTAL CONNECTED TO
-<a href="https://worldwideartadvocacy.org/" target="_blank" rel="noopener">WORLDWIDE ART ADVOCACY</a>
-<br>
-<span style="display:block;margin-top:8px;letter-spacing:0">Promoting Art. Preserving Culture.</span>
-</footer>
-</div>
-
-<div class="modal" id="entryModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-<div class="modalbox">
-<h2 id="modalTitle">Add a directory resource</h2>
-<p>Add an artist, institution, cultural resource, event or opportunity. Include a reliable source URL. This first version saves entries in this browser.</p>
-<form id="entryForm">
-<div class="formgrid">
-<div class="formfield">
-<label for="entryTitle">Name / title *</label>
-<input id="entryTitle" required maxlength="120" placeholder="Resource name">
-</div>
-<div class="formfield">
-<label for="entryType">Resource type *</label>
-<select id="entryType" required>
-<option value="">Choose type</option>
-<option>Artist</option>
-<option>Artwork / Art form</option>
-<option>Gallery / Museum</option>
-<option>Culture / Heritage</option>
-<option>Event / Exhibition</option>
-<option>Education / Research</option>
-<option>Opportunity</option>
-<option>Art business / Service</option>
-<option>WAA resource</option>
-</select>
-</div>
-<div class="formfield">
-<label for="entryCountry">Country *</label>
-<select id="entryCountry" required></select>
-</div>
-<div class="formfield">
-<label for="entryCity">City / locality</label>
-<input id="entryCity" maxlength="80" placeholder="City (optional)">
-</div>
-<div class="formfield">
-<label for="entryCategory">Art category</label>
-<select id="entryCategory">
-<option value="">Choose category</option>
-<option>Artists & Creative Professionals</option>
-<option>Artworks & Art Forms</option>
-<option>Galleries, Museums & Art Spaces</option>
-<option>Cultures & Art Heritage</option>
-<option>Exhibitions & Art Events</option>
-<option>Education & Research</option>
-<option>Opportunities & Development</option>
-<option>Art Business & Professional Services</option>
-</select>
-</div>
-<div class="formfield">
-<label for="entrySource">Official website / source URL *</label>
-<input id="entrySource" type="url" required placeholder="https://…">
-</div>
-<div class="formfield full">
-<label for="entryDescription">Description *</label>
-<textarea id="entryDescription" required maxlength="500" placeholder="Write a concise, factual introduction."></textarea>
-</div>
-<div class="formfield">
-<label for="entryTags">Search keywords</label>
-<input id="entryTags" placeholder="painting, contemporary, textile">
-</div>
-<div class="formfield">
-<label for="entryVerified">Verification status</label>
-<select id="entryVerified">
-<option value="unverified">Awaiting WAA review</option>
-</select>
-</div>
-</div>
-<div class="modal-actions">
-<button type="button" class="smallbtn" id="cancelEntry">Cancel</button>
-<button type="submit" class="primary">Save resource</button>
-</div>
-</form>
-</div>
-</div>
-
-<div class="status" id="status" role="status" aria-live="polite"></div>
+<!-- Globe library -->
+<script src="https://unpkg.com/globe.gl"></script>
 
 <script>
-(()=>{
-'use strict';
+(() => {
+  const loading = document.getElementById("loading");
+  const drawer = document.getElementById("bottomDrawer");
+  const drawerTitle = document.getElementById("drawerTitle");
+  const drawerSubtitle = document.getElementById("drawerSubtitle");
+  const drawerDesc = document.getElementById("drawerDesc");
+  const drawerLinks = document.getElementById("drawerLinks");
+  document.getElementById("closeDrawer").onclick = () => drawer.classList.remove("open");
 
-const REGIONS=[
-'Africa',
-'Europe',
-'Asia',
-'North America',
-'Latin America & Caribbean',
-'Oceania'
-];
+  // Master URLs mapped from your WAA website links
+  const URLS = {
+    contact: "https://worldwideartadvocacy.wordpress.com/contact/",
+    licensing: "https://worldwideartadvocacy.wordpress.com/global-art-hub/art-licensing-copyright-contracts-for-artists-worldwide-art-advocacy/",
+    business: "https://worldwideartadvocacy.wordpress.com/global-art-hub/art-business-resources-for-artists-worldwide-art-advocacy/",
+    growth: "https://worldwideartadvocacy.wordpress.com/global-art-hub/artist-growth-resources-build-your-art-career-worldwide-art-advocacy/",
+    cultures: "https://worldwideartadvocacy.wordpress.com/cultures/",
+    hub: "https://worldwideartadvocacy.wordpress.com/global-art-hub/",
+    africa: "https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8d-african-art-opportunities-artists-culture-resources/",
+    europe: "https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%87%aa%f0%9f%87%ba-european-art-opportunities-artists-museums-resources/",
+    north_america: "https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8e-north-american-art-opportunities-artists-culture-resources/",
+    latin_america: "https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8e-latin-american-caribbean-art-opportunities-worldwide-art-advocacy/",
+    asia: "https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8f-asian-art-opportunities-artists-culture-resources/",
+    oceania: "https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8a-australian-pacific-art-opportunities-artists-culture-resources/",
+    open_calls: "https://worldwideartadvocacy.wordpress.com/global-artist-open-calls-competitions/",
+    residencies: "https://worldwideartadvocacy.wordpress.com/global-art-residencies/",
+    sell_art: "https://worldwideartadvocacy.wordpress.com/where-to-sell-your-art-online-best-online-art-marketplaces/",
+    galleries: "https://worldwideartadvocacy.wordpress.com/global-art-hub/gallery-directory-worldwide-global-galleries-for-artists/",
+    agents: "https://worldwideartadvocacy.wordpress.com/%f0%9f%a4%9d-artist-representatives-art-agents-art-advisors-directory/",
+    commissions: "https://worldwideartadvocacy.wordpress.com/global-art-hub/global-art-commissions-public-art-opportunities-worldwide-art-advocacy/",
+    tips: "https://worldwideartadvocacy.wordpress.com/category/art-tips-and-advice/"
+  };
 
-const REGION_URLS={
-'Africa':'https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8d-african-art-opportunities-artists-culture-resources/',
-'Europe':'https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%87%aa%f0%9f%87%ba-european-art-opportunities-artists-museums-resources/',
-'Asia':'https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8f-asian-art-opportunities-artists-culture-resources/',
-'North America':'https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8e-north-american-art-opportunities-artists-culture-resources/',
-'Latin America & Caribbean':'https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8e-latin-american-caribbean-art-opportunities-worldwide-art-advocacy/',
-'Oceania':'https://worldwideartadvocacy.wordpress.com/global-art-hub/%f0%9f%8c%8a-australian-pacific-art-opportunities-artists-culture-resources/'
-};
+  let selectedCountry = null;
+  let selectedCountryLabel = null;
 
-const CATEGORIES=[
-{ico:'🎨',title:'Artists & Creative Professionals',desc:'Artists, makers, designers and creative voices.'},
-{ico:'🗿',title:'Artworks & Art Forms',desc:'Painting, sculpture, craft, digital and more.'},
-{ico:'🏛️',title:'Galleries, Museums & Art Spaces',desc:'Places that exhibit, preserve and present art.'},
-{ico:'🌍',title:'Cultures & Art Heritage',desc:'Traditions, histories, identity and heritage.'},
-{ico:'🖼️',title:'Exhibitions & Art Events',desc:'Shows, biennales, fairs and festivals.'},
-{ico:'🎓',title:'Education & Research',desc:'Schools, learning, archives and scholarship.'},
-{ico:'✨',title:'Opportunities & Development',desc:'Residencies, grants, open calls and commissions.'},
-{ico:'🤝',title:'Art Business & Professional Services',desc:'Markets, consultants, licensing and support.'}
-];
+  const regionCenters = [
+    { name: "Africa", lat: 1, lng: 20, urlKey: "africa", desc: "Featuring rich contemporary paintings, traditional sculptures, textiles, and vibrant cultural heritage initiatives.", artTypes: "Contemporary painting, traditional bronze casting, textile arts, sculpture, and performance." },
+    { name: "Europe", lat: 52, lng: 15, urlKey: "europe", desc: "Home to historic masterworks, major international museums, fine art printmaking, and avant-garde installations.", artTypes: "Classical fine art, European sculpture, digital media, printmaking, and conceptual installations." },
+    { name: "Asia", lat: 28, lng: 90, urlKey: "asia", desc: "Showcasing classical ink painting, porcelain craftsmanship, modern digital art, and intricate sculpture.", artTypes: "Traditional ink wash, ceramics, modern mixed media, scroll painting, and architectural crafts." },
+    { name: "North America", lat: 43, lng: -102, urlKey: "north_america", desc: "A vibrant hub for contemporary fine art, mixed-media galleries, public murals, and digital photography.", artTypes: "Contemporary canvas, street art & murals, fine art photography, digital sculpture, and abstract works." },
+    { name: "Latin America & Caribbean", lat: 5, lng: -68, urlKey: "latin_america", desc: "Renowned for bold muralism, vibrant textiles, conceptual storytelling, and indigenous craft traditions.", artTypes: "Muralism, vibrant figurative painting, indigenous weaving crafts, wood carving, and modern collage." },
+    { name: "Oceania", lat: -23, lng: 145, urlKey: "oceania", desc: "Celebrating sacred indigenous carvings, oceanic tapa cloth designs, contemporary paintings, and island crafts.", artTypes: "Indigenous dot paintings, ceremonial wood carving, textile design, and environmental sculpture." }
+  ];
 
-const COUNTRY_DATA={
-'Africa':['Algeria','Angola','Benin','Botswana','Burkina Faso','Burundi','Cabo Verde','Cameroon','Central African Republic','Chad','Comoros','Congo','Democratic Republic of the Congo','Djibouti','Egypt','Equatorial Guinea','Eritrea','Eswatini','Ethiopia','Gabon','Gambia','Ghana','Guinea','Guinea-Bissau','Ivory Coast','Kenya','Lesotho','Liberia','Libya','Madagascar','Malawi','Mali','Mauritania','Mauritius','Morocco','Mozambique','Namibia','Niger','Nigeria','Rwanda','Sao Tome and Principe','Senegal','Seychelles','Sierra Leone','Somalia','South Africa','South Sudan','Sudan','Tanzania','Togo','Tunisia','Uganda','Zambia','Zimbabwe'],
-'Europe':['Albania','Andorra','Armenia','Austria','Azerbaijan','Belarus','Belgium','Bosnia and Herzegovina','Bulgaria','Croatia','Cyprus','Czechia','Denmark','Estonia','Finland','France','Georgia','Germany','Greece','Hungary','Iceland','Ireland','Italy','Kazakhstan','Kosovo','Latvia','Liechtenstein','Lithuania','Luxembourg','Malta','Moldova','Monaco','Montenegro','Netherlands','North Macedonia','Norway','Poland','Portugal','Romania','Russia','San Marino','Serbia','Slovakia','Slovenia','Spain','Sweden','Switzerland','Turkey','Ukraine','United Kingdom','Vatican City'],
-'Asia':['Afghanistan','Bahrain','Bangladesh','Bhutan','Brunei','Cambodia','China','India','Indonesia','Iran','Iraq','Israel','Japan','Jordan','Kuwait','Kyrgyzstan','Laos','Lebanon','Malaysia','Maldives','Mongolia','Myanmar','Nepal','North Korea','Oman','Pakistan','Palestine','Philippines','Qatar','Saudi Arabia','Singapore','South Korea','Sri Lanka','Syria','Taiwan','Tajikistan','Thailand','Timor-Leste','Turkmenistan','United Arab Emirates','Uzbekistan','Vietnam','Yemen'],
-'North America':['Antigua and Barbuda','Bahamas','Barbados','Belize','Canada','Costa Rica','Cuba','Dominica','Dominican Republic','El Salvador','Grenada','Guatemala','Haiti','Honduras','Jamaica','Mexico','Nicaragua','Panama','Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Trinidad and Tobago','United States'],
-'Latin America & Caribbean':['Argentina','Bolivia','Brazil','Chile','Colombia','Ecuador','Guyana','Paraguay','Peru','Suriname','Uruguay','Venezuela'],
-'Oceania':['Australia','Fiji','Kiribati','Marshall Islands','Micronesia','Nauru','New Zealand','Palau','Papua New Guinea','Samoa','Solomon Islands','Tonga','Tuvalu','Vanuatu']
-};
+  const centralAmerica = new Set(["Belize", "Costa Rica", "El Salvador", "Guatemala", "Honduras", "Nicaragua", "Panama"]);
+  const caribbean = new Set(["Antigua and Barbuda", "The Bahamas", "Bahamas", "Barbados", "Cuba", "Dominica", "Dominican Republic", "Grenada", "Haiti", "Jamaica", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Trinidad and Tobago"]);
 
-const allCountries=Object.entries(COUNTRY_DATA).flatMap(
-([region,names])=>names.map(name=>({name,region}))
-);
+  function getCountryName(properties) {
+    return properties.ADMIN || properties.NAME_EN || properties.NAME || "Unknown country";
+  }
 
-const COUNTRY_ALIASES={
-'united states of america':'United States',
-'united republic of tanzania':'Tanzania',
-'democratic republic of the congo':'Democratic Republic of the Congo',
-'democratic republic of congo':'Democratic Republic of the Congo',
-'dem rep congo':'Democratic Republic of the Congo',
-'dem rep of the congo':'Democratic Republic of the Congo',
-'republic of the congo':'Congo',
-'congo brazzaville':'Congo',
-'congo kinshasa':'Democratic Republic of the Congo',
-'cote d ivoire':'Ivory Coast',
-'republic of cote d ivoire':'Ivory Coast',
-'czech republic':'Czechia',
-'swaziland':'Eswatini',
-'the gambia':'Gambia',
-'the bahamas':'Bahamas',
-'east timor':'Timor-Leste',
-'macedonia':'North Macedonia',
-'republic of serbia':'Serbia',
-'republic of korea':'South Korea',
-'korea south':'South Korea',
-'korea north':'North Korea',
-'brunei darussalam':'Brunei',
-'cape verde':'Cabo Verde',
-'palestinian territories':'Palestine',
-'state of palestine':'Palestine',
-'russian federation':'Russia',
-'iran islamic republic of':'Iran',
-'syrian arab republic':'Syria',
-'lao pdr':'Laos',
-'viet nam':'Vietnam',
-'kyrgyz republic':'Kyrgyzstan',
-'micronesia federated states of':'Micronesia'
-};
+  function getRegion(properties) {
+    const name = getCountryName(properties);
+    const subregion = (properties.SUBREGION || "").toLowerCase();
+    const continent = (properties.CONTINENT || "").toLowerCase();
 
-const BASE_RECORDS=[
-{
-id:'waa-global-art-hub',
-title:'WAA Global Art Hub',
-type:'WAA resource',
-country:'Global',
-region:'Global',
-city:'Online',
-category:'Cultures & Art Heritage',
-description:'Worldwide Art Advocacy’s gateway to global art promotion, artist development, cultural research and creative collaboration.',
-url:'https://worldwideartadvocacy.org/global-art-hub/',
-tags:['WAA','global art','artist development','culture'],
-verified:'verified',
-source:'Worldwide Art Advocacy',
-updated:'2026-11-10'
-},
-{
-id:'waa-home',
-title:'Worldwide Art Advocacy',
-type:'WAA resource',
-country:'Global',
-region:'Global',
-city:'Online',
-category:'Art Business & Professional Services',
-description:'An international art advocacy platform promoting artists, preserving culture and connecting creative communities.',
-url:'https://worldwideartadvocacy.org/',
-tags:['WAA','art advocacy','artists','culture'],
-verified:'verified',
-source:'Worldwide Art Advocacy',
-updated:'2026-11-10'
-},
-{
-id:'waa-open-calls',
-title:'Global Artist Open Calls & Competitions',
-type:'WAA resource',
-country:'Global',
-region:'Global',
-city:'Online',
-category:'Opportunities & Development',
-description:'WAA’s open-call and competition resource gateway. Follow the linked page for current listings and original organiser details.',
-url:'https://worldwideartadvocacy.wordpress.com/global-artist-open-calls-competitions/',
-tags:['open calls','competitions','opportunities','WAA'],
-verified:'unverified',
-source:'WAA page reference; individual listings require checking',
-updated:'2026-11-10'
-}
-];
+    if (continent === "south america" || centralAmerica.has(name) || caribbean.has(name) || subregion === "caribbean" || subregion === "central america") {
+      return "Latin America & Caribbean";
+    }
+    if (continent === "north america") return "North America";
+    if (["africa", "europe", "asia", "oceania"].includes(continent)) {
+      return continent.charAt(0).toUpperCase() + continent.slice(1);
+    }
+    return "Africa";
+  }
 
-const STORE='waa_global_art_explorer_records_v1';
+  function showDrawer(title, subtitle, desc, linksArr) {
+    drawerTitle.textContent = title;
+    drawerSubtitle.textContent = subtitle;
+    drawerDesc.textContent = desc;
+    drawerLinks.innerHTML = "";
+    linksArr.forEach(item => {
+      const a = document.createElement("a");
+      a.href = item.url;
+      a.target = "_blank";
+      a.rel = "noopener";
+      a.innerHTML = `<span>${item.label}</span><span class="tag">${item.tag}</span>`;
+      drawerLinks.appendChild(a);
+    });
+    drawer.classList.add("open");
+  }
 
-let records=[];
-let activeRegion='';
-let activeCategory='';
-let selectedCountry='';
-let countryFilter='';
-let publishedIds=new Set();
-let publishedCount=0;
-let globeInstance=null;
-let globeFeatures=[];
+  if (typeof Globe !== "function") {
+    loading.textContent = "The globe library could not load. Check your internet connection and reload.";
+    return;
+  }
 
-const $=id=>document.getElementById(id);
+  try {
+    const globe = Globe()(document.getElementById("globeViz"))
+      .backgroundColor("rgba(0,0,0,0)")
+      .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
+      .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
+      .showAtmosphere(true)
+      .atmosphereColor("#58bdb5")
+      .atmosphereAltitude(0.16)
+      .polygonAltitude(d => d === selectedCountry ? 0.018 : 0.004)
+      .polygonCapColor(d => d === selectedCountry ? "rgba(255,190,80,0.78)" : "rgba(29,121,121,0.20)")
+      .polygonSideColor(() => "rgba(20,90,90,0.12)")
+      .polygonStrokeColor(() => "rgba(205,235,228,0.50)")
+      .polygonLabel(d => {
+        const properties = d.properties || {};
+        return "<b>" + getCountryName(properties) + "</b><br>" + (getRegion(properties) || "World");
+      })
+      .onPolygonClick((feature, event, coordinates) => {
+        const properties = feature.properties || {};
+        const country = getCountryName(properties);
+        const region = getRegion(properties);
+        const regObj = regionCenters.find(r => r.name === region) || regionCenters[0];
 
-const safeURL=u=>{
-try{
-const x=new URL(String(u||''),location.href);
-return ['http:','https:'].includes(x.protocol)?x.href:'#';
-}catch(e){return '#'}
-};
+        selectedCountry = feature;
+        const point = coordinates || { lat: 0, lng: 0 };
 
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({
-'&':'&amp;',
-'<':'&lt;',
-'>':'&gt;',
-'"':'&quot;',
-"'":'&#39;'
-}[c]));
+        selectedCountryLabel = {
+          kind: "country",
+          name: country,
+          lat: point.lat,
+          lng: point.lng
+        };
 
-function notify(msg){
-const el=$('status');
-el.textContent=msg;
-el.classList.add('show');
-clearTimeout(notify.timer);
-notify.timer=setTimeout(()=>el.classList.remove('show'),3200);
-}
+        globe.htmlElementsData([
+          ...regionCenters.map(r => ({ ...r, kind: "region" })),
+          selectedCountryLabel
+        ]);
 
-function normalizeCountryName(name){
-return String(name||'')
-.normalize('NFD')
-.replace(/[\u0300-\u036f]/g,'')
-.toLowerCase()
-.replace(/&/g,'and')
-.replace(/[^a-z0-9]+/g,' ')
-.trim();
-}
+        globe
+          .polygonCapColor(d => d === selectedCountry ? "rgba(255,190,80,0.78)" : "rgba(29,121,121,0.20)")
+          .polygonAltitude(d => d === selectedCountry ? 0.018 : 0.004);
 
-function countryFromFeature(feature){
-const props=feature?.properties||{};
-const names=[props.ADMIN,props.NAME,props.name,props.NAME_LONG,props.SOVEREIGNT].filter(Boolean);
-for(const rawName of names){
-const normalized=normalizeCountryName(rawName);
-const alias=COUNTRY_ALIASES[normalized]||rawName;
-const match=allCountries.find(c=>normalizeCountryName(c.name)===normalizeCountryName(alias));
-if(match)return match;
-}
-return null;
-}
+        // Slide up bottom info card with artwork types and WAA links tailored to this country
+        showDrawer(
+          country,
+          region + " Art Ecosystem",
+          `Prominent art forms in ${country} include ${regObj.artTypes} Explore verified galleries, open calls, and institutional opportunities connected with this nation.`,
+          [
+            { label: "View " + region + " Art Hub", url: URLS[regObj.urlKey], tag: "Regional Hub" },
+            { label: "Global Artist Open Calls", url: URLS.open_calls, tag: "Opportunities" },
+            { label: "International Art Residencies", url: URLS.residencies, tag: "Residencies" },
+            { label: "Worldwide Gallery Directory", url: URLS.galleries, tag: "Galleries" },
+            { label: "Art Agents & Representatives", url: URLS.agents, tag: "Representation" },
+            { label: "Art Licensing & Contracts", url: URLS.licensing, tag: "Legal" }
+          ]
+        );
+      })
+      .htmlElementsData(regionCenters.map(r => ({ ...r, kind: "region" })))
+      .htmlLat(d => d.lat)
+      .htmlLng(d => d.lng)
+      .htmlElement(d => {
+        const element = document.createElement("div");
+        if (d.kind === "country") {
+          element.className = "country-tag";
+          element.textContent = d.name;
+        } else {
+          element.className = "region-tag";
+          element.textContent = d.name;
+          element.onclick = (e) => {
+            e.stopPropagation();
+            showDrawer(
+              d.name + " Region",
+              "Continental Gateway",
+              d.desc,
+              [
+                { label: "Explore " + d.name + " Art Hub", url: URLS[d.urlKey], tag: "Hub" },
+                { label: "Global Art Hub Main Page", url: URLS.hub, tag: "Overview" },
+                { label: "Artist Open Calls & Competitions", url: URLS.open_calls, tag: "Open Calls" },
+                { label: "Global Art Residencies", url: URLS.residencies, tag: "Residencies" },
+                { label: "Where to Sell Art Online", url: URLS.sell_art, tag: "Marketplaces" },
+                { label: "Art Career Growth Resources", url: URLS.growth, tag: "Career" }
+              ]
+            );
+          };
+        }
+        return element;
+      })
+      .polygonsTransitionDuration(250);
 
-function regionOf(country){
-const normalized=normalizeCountryName(country);
-const alias=COUNTRY_ALIASES[normalized]||country;
-return allCountries.find(c=>normalizeCountryName(c.name)===normalizeCountryName(alias))?.region||'';
-}
+    const controls = globe.controls();
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.28;
+    controls.enableZoom = true;
+    controls.enableDamping = true;
 
-function getFeatureCenter(feature){
-const props=feature?.properties||{};
-const lat=Number(props.LABEL_Y??props.label_y);
-const lng=Number(props.LABEL_X??props.label_x);
-if(Number.isFinite(lat)&&Number.isFinite(lng)&&(lat!==0||lng!==0)){
-return {lat,lng};
-}
-const points=[];
-function collect(value){
-if(!Array.isArray(value))return;
-if(value.length>=2&&typeof value[0]==='number'&&typeof value[1]==='number'){
-points.push([value[0],value[1]]);
-return;
-}
-value.forEach(collect);
-}
-collect(feature?.geometry?.coordinates);
-if(!points.length)return {lat:0,lng:0};
-const longitudes=points.map(p=>p[0]);
-const latitudes=points.map(p=>p[1]);
-return {
-lat:(Math.min(...latitudes)+Math.max(...latitudes))/2,
-lng:(Math.min(...longitudes)+Math.max(...longitudes))/2
-};
-}
+    globe.pointOfView({ lat: 18, lng: 5, altitude: 2.15 }, 0);
 
-function selectedGlobeFeature(){
-return globeFeatures.find(feature=>{
-const match=countryFromFeature(feature);
-return match&&normalizeCountryName(match.name)===normalizeCountryName(selectedCountry);
-});
-}
+    function resizeGlobe() {
+      const container = document.getElementById("globeViz");
+      globe.width(container.clientWidth);
+      globe.height(container.clientHeight);
+    }
+    window.addEventListener("resize", resizeGlobe);
+    resizeGlobe();
 
-function updateGlobeSelection(){
-if(!globeInstance||!globeFeatures.length)return;
-const feature=selectedGlobeFeature();
-globeInstance
-.polygonCapColor(f=>{
-const match=countryFromFeature(f);
-return selectedCountry&&match&&normalizeCountryName(match.name)===normalizeCountryName(selectedCountry)?'#d7b978':'rgba(29,121,121,0.23)';
-})
-.polygonStrokeColor(f=>{
-const match=countryFromFeature(f);
-return selectedCountry&&match&&normalizeCountryName(match.name)===normalizeCountryName(selectedCountry)?'#fff0b8':'rgba(156,203,196,0.55)';
-})
-.polygonAltitude(f=>{
-const match=countryFromFeature(f);
-return selectedCountry&&match&&normalizeCountryName(match.name)===normalizeCountryName(selectedCountry)?0.018:0.008;
-})
-.labelsData(feature?[{name:selectedCountry,...getFeatureCenter(feature)}]:[])
-.labelLat(d=>d.lat)
-.labelLng(d=>d.lng)
-.labelText(d=>d.name.toUpperCase())
-.labelSize(0.75)
-.labelColor(()=>'#ffffff')
-.labelAltitude(0.035)
-.labelDotRadius(0.22)
-.labelIncludeDot(true)
-.labelResolution(3);
+    fetch("https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson")
+      .then(response => {
+        if (!response.ok) throw new Error("Country boundaries unavailable");
+        return response.json();
+      })
+      .then(data => {
+        const countries = (data.features || []).filter(country => getRegion(country.properties || {}));
+        globe.polygonsData(countries);
+        loading.style.display = "none";
+      })
+      .catch(error => {
+        loading.textContent = "The globe is ready, but country boundaries could not load.";
+        console.error(error);
+      });
 
-if(feature){
-const center=getFeatureCenter(feature);
-globeInstance.pointOfView({lat:center.lat,lng:center.lng,altitude:1.45},900);
-}
-}
-
-function loadRecords(){
-try{
-const saved=JSON.parse(localStorage.getItem(STORE)||'null');
-records=Array.isArray(saved)?saved:BASE_RECORDS.slice();
-}catch(e){
-records=BASE_RECORDS.slice();
-}
-}
-
-function saveRecords(){
-localStorage.setItem(STORE,JSON.stringify(records));
-}
-
-async function loadPublishedRecords(){
-try{
-const response=await fetch('./data/records.json',{cache:'no-store'});
-if(!response.ok)throw new Error('Published database unavailable');
-const data=await response.json();
-if(!Array.isArray(data.records))throw new Error('Invalid database');
-const published=data.records.filter(r=>r&&r.id&&r.title);
-publishedIds=new Set(published.map(r=>r.id));
-publishedCount=published.length;
-const merged=new Map();
-published.forEach(r=>merged.set(r.id,r));
-records.forEach((r,i)=>{
-if(r&&r.id&&!publishedIds.has(r.id)){
-merged.set(r.id,r);
-}else if(r&&!r.id){
-merged.set('local-'+i,r);
-}
-});
-records=[...merged.values()];
-renderResults();
-}catch(error){
-console.warn('WAA published directory could not load:',error);
-renderResults();
-}
-}
-
-function buildRegions(){
-const box=$('regionButtons');
-REGIONS.forEach(r=>{
-const b=document.createElement('button');
-b.className='region-btn';
-b.textContent=r;
-b.dataset.region=r;
-b.addEventListener('click',()=>selectRegion(r));
-box.appendChild(b);
-});
-REGIONS.forEach(r=>{
-const o=document.createElement('option');
-o.value=r;
-o.textContent=r;
-$('filterRegion').appendChild(o);
-});
-}
-
-function buildCountries(){
-allCountries.sort((a,b)=>a.name.localeCompare(b.name));
-const selects=[$('countrySelect'),$('entryCountry')];
-selects.forEach(sel=>{
-const groups={};
-REGIONS.forEach(r=>groups[r]=[]);
-allCountries.forEach(c=>groups[c.region].push(c.name));
-REGIONS.forEach(r=>{
-const og=document.createElement('optgroup');
-og.label=r;
-groups[r].forEach(n=>{
-const o=document.createElement('option');
-o.value=n;
-o.textContent=n;
-og.appendChild(o);
-});
-sel.appendChild(og);
-});
-});
-$('filterRegion').value='';
-}
-
-function buildCategories(){
-CATEGORIES.forEach(c=>{
-const b=document.createElement('button');
-b.className='category';
-b.innerHTML=`<span class="ico">${c.ico}</span><strong>${esc(c.title)}</strong><small>${esc(c.desc)}</small>`;
-b.addEventListener('click',()=>{
-activeCategory=activeCategory===c.title?'':c.title;
-document.querySelectorAll('.category').forEach((x,i)=>{
-x.classList.toggle('active',CATEGORIES[i].title===activeCategory);
-});
-$('filterCategory').value=activeCategory;
-renderResults();
-$('directory').scrollIntoView({behavior:'smooth'});
-});
-$('categoryGrid').appendChild(b);
-const o=document.createElement('option');
-o.value=c.title;
-o.textContent=c.title;
-$('filterCategory').appendChild(o);
-});
-}
-
-function selectRegion(region){
-activeRegion=region;
-countryFilter='';
-selectedCountry='';
-document.querySelectorAll('.region-btn').forEach(b=>{
-b.classList.toggle('active',b.dataset.region===region);
-});
-$('filterRegion').value=region;
-$('countrySelect').value='';
-$('countryInfo').classList.remove('show');
-if(globeInstance){
-const coords={
-'Africa':[1,20],
-'Europe':[52,15],
-'Asia':[28,90],
-'North America':[40,-100],
-'Latin America & Caribbean':[-15,-60],
-'Oceania':[-23,145]
-};
-const p=coords[region];
-if(p){
-globeInstance.pointOfView({lat:p[0],lng:p[1],altitude:1.65},900);
-}
-}
-renderResults();
-updateGlobeSelection();
-}
-
-function selectCountry(name,fromGlobe=false){
-if(!name)return;
-selectedCountry=name;
-countryFilter=name;
-const region=regionOf(name);
-activeRegion=region;
-
-document.querySelectorAll('.region-btn').forEach(b=>{
-b.classList.toggle('active',b.dataset.region===region);
-});
-
-const countryMatch=allCountries.find(c=>normalizeCountryName(c.name)===normalizeCountryName(name));
-$('countrySelect').value=countryMatch?countryMatch.name:'';
-$('countryName').textContent=name;
-
-const regionHubLink=REGION_URLS[region]||'https://worldwideartadvocacy.wordpress.com/global-art-hub/';
-$('countryDesc').textContent=region
-?`${name} (${region}): Explore vibrant contemporary painting, traditional sculpture, cultural heritage, and creative networks.`
-:`Explore art forms, cultural heritage, and institutional resources connected with ${name}.`;
-
-const linksBox=$('countryActionLinks');
-linksBox.innerHTML=`
-<a href="${regionHubLink}" target="_blank" rel="noopener"><span>Explore ${region||'Regional'} Art Hub</span><span class="tag">Hub ↗</span></a>
-<a href="https://worldwideartadvocacy.wordpress.com/global-artist-open-calls-competitions/" target="_blank" rel="noopener"><span>Artist Open Calls & Competitions</span><span class="tag">Opportunities ↗</span></a>
-<a href="https://worldwideartadvocacy.wordpress.com/global-art-residencies/" target="_blank" rel="noopener"><span>Global Art Residencies</span><span class="tag">Residencies ↗</span></a>
-<a href="https://worldwideartadvocacy.wordpress.com/global-art-hub/gallery-directory-worldwide-global-galleries-for-artists/" target="_blank" rel="noopener"><span>Worldwide Gallery Directory</span><span class="tag">Galleries ↗</span></a>
-`;
-
-$('countryInfo').classList.add('show');
-$('filterRegion').value=region;
-$('filterSearch').value='';
-
-renderResults();
-updateGlobeSelection();
-
-if(!fromGlobe){
-$('countryInfo').scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-}
-
-function recordMatches(r,q){
-const hay=[
-r.title,
-r.type,
-r.country,
-r.region,
-r.city,
-r.category,
-r.description,
-(r.tags||[]).join(' '),
-r.source
-].join(' ').toLowerCase();
-return !q||hay.includes(q.toLowerCase());
-}
-
-function renderResults(){
-const q=$('filterSearch').value.trim();
-const reg=$('filterRegion').value;
-const cat=$('filterCategory').value;
-const typ=$('filterType').value;
-
-const list=records.filter(r=>
-(!countryFilter||String(r.country||'').toLowerCase()===countryFilter.toLowerCase())&&
-(!reg||r.region===reg||r.region==='Global')&&
-(!cat||r.category===cat)&&
-(!typ||r.type===typ)&&
-recordMatches(r,q)
-);
-
-const localCount=records.filter(r=>!publishedIds.has(r.id)).length;
-$('resultCount').textContent=`${list.length} ${list.length===1?'resource':'resources'} found · ${publishedCount} published · ${localCount} local`;
-
-const box=$('results');
-box.innerHTML='';
-
-if(!list.length){
-box.innerHTML=`
-<div class="empty">
-<strong>No matching directory entries yet.</strong><br>
-There are currently no matching records for this selection. WAA can expand this country directory as resources are researched.<br><br>
-<button class="smallbtn" id="emptyAdd">＋ Add a resource</button>
-</div>
-`;
-const a=$('emptyAdd');
-if(a)a.onclick=openModal;
-return;
-}
-
-list.forEach(r=>{
-const card=document.createElement('article');
-card.className='result';
-const verified=r.verified==='verified'?'WAA verified':'Verification pending';
-const origin=publishedIds.has(r.id)?'WAA published':'Local entry';
-
-card.innerHTML=`
-<div class="tag">${esc(r.type)} · ${esc(r.category||'Uncategorised')}</div>
-<h3>${esc(r.title)}</h3>
-<p>${esc(r.description)}</p>
-<div class="result-foot">
-<span>${esc([r.city,r.country].filter(Boolean).join(', '))}</span>
-<span>${esc(verified)}</span>
-</div>
-<div class="result-foot">
-<span>${esc(origin)} · ${esc(r.source||'Source not specified')}</span>
-<a href="${esc(safeURL(r.url))}" target="_blank" rel="noopener noreferrer">Visit source ↗</a>
-</div>
-`;
-box.appendChild(card);
-});
-}
-
-function runSearch(){
-const q=$('globalSearch').value.trim();
-countryFilter='';
-selectedCountry='';
-$('countryInfo').classList.remove('show');
-$('countrySelect').value='';
-$('filterSearch').value=q;
-activeCategory='';
-$('filterCategory').value='';
-document.querySelectorAll('.category').forEach(b=>b.classList.remove('active'));
-
-const country=allCountries.find(c=>normalizeCountryName(c.name)===normalizeCountryName(q));
-if(country){
-selectCountry(country.name);
-}else{
-renderResults();
-updateGlobeSelection();
-}
-$('directory').scrollIntoView({behavior:'smooth'});
-}
-
-function openModal(){
-$('entryModal').classList.add('show');
-$('entryTitle').focus();
-}
-
-function closeModal(){
-$('entryModal').classList.remove('show');
-$('entryForm').reset();
-}
-
-$('entryForm').addEventListener('submit',e=>{
-e.preventDefault();
-const country=$('entryCountry').value;
-const url=$('entrySource').value.trim();
-if(!/^https?:\/\//i.test(url)){
-notify('Please enter a complete website URL beginning with https:// or http://');
-return;
-}
-const item={
-id:'waa-'+Date.now(),
-title:$('entryTitle').value.trim(),
-type:$('entryType').value,
-country,
-region:regionOf(country)||'Global',
-city:$('entryCity').value.trim(),
-category:$('entryCategory').value,
-description:$('entryDescription').value.trim(),
-url,
-tags:$('entryTags').value.split(',').map(s=>s.trim()).filter(Boolean),
-verified:'unverified',
-source:'User-submitted; review before publication',
-updated:new Date().toISOString().slice(0,10)
-};
-records.unshift(item);
-try{
-saveRecords();
-closeModal();
-renderResults();
-notify('Resource saved in this browser. Export the JSON to back it up.');
-}catch(err){
-records.shift();
-notify('Could not save. Browser storage may be full or disabled.');
-}
-});
-
-function exportJSON(){
-const payload={schema:'waa-global-art-explorer',version:1,exportedAt:new Date().toISOString(),records};
-const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-const a=document.createElement('a');
-a.href=URL.createObjectURL(blob);
-a.download='waa-global-art-explorer-database.json';
-a.click();
-URL.revokeObjectURL(a.href);
-notify('Directory JSON export prepared.');
-}
-
-function importJSON(file){
-const reader=new FileReader();
-reader.onload=()=>{
-try{
-const parsed=JSON.parse(reader.result);
-const incoming=Array.isArray(parsed)?parsed:parsed.records;
-if(!Array.isArray(incoming))throw Error('Invalid records');
-const valid=incoming.filter(r=>r&&typeof r.title==='string'&&typeof r.url==='string'&&/^https?:\/\//i.test(r.url)&&typeof r.country==='string'&&typeof r.description==='string');
-if(!valid.length)throw Error('No valid resource records found');
-const map=new Map(records.map(r=>[r.id,r]));
-valid.forEach((r,i)=>{
-const normalized={
-...r,
-id:r.id||'import-'+Date.now()+'-'+i,
-region:r.region||regionOf(r.country)||'Global',
-tags:Array.isArray(r.tags)?r.tags:[],
-verified:r.verified==='verified'?'verified':'unverified'
-};
-map.set(normalized.id,normalized);
-});
-records=[...map.values()];
-saveRecords();
-renderResults();
-notify(`${valid.length} records imported.`);
-}catch(err){
-notify('Import failed: please choose a valid WAA Explorer JSON export.');
-}
-};
-reader.readAsText(file);
-}
-
-$('searchBtn').addEventListener('click',runSearch);
-$('globalSearch').addEventListener('keydown',e=>{if(e.key==='Enter')runSearch();});
-document.querySelectorAll('.chip').forEach(b=>{
-b.addEventListener('click',()=>{
-$('globalSearch').value=b.dataset.query;
-runSearch();
-});
-});
-$('countrySelect').addEventListener('change',e=>{selectCountry(e.target.value);});
-$('countrySearch').addEventListener('click',()=>{
-if(selectedCountry){
-countryFilter=selectedCountry;
-$('filterSearch').value='';
-renderResults();
-$('directory').scrollIntoView({behavior:'smooth'});
-}
-});
-$('clearCountry').addEventListener('click',()=>{
-$('countryInfo').classList.remove('show');
-$('countrySelect').value='';
-selectedCountry='';
-countryFilter='';
-$('filterRegion').value='';
-activeRegion='';
-document.querySelectorAll('.region-btn').forEach(b=>b.classList.remove('active'));
-renderResults();
-updateGlobeSelection();
-});
-
-$('filterRegion').addEventListener('change',()=>{
-countryFilter='';
-selectedCountry='';
-$('countrySelect').value='';
-$('countryInfo').classList.remove('show');
-renderResults();
-updateGlobeSelection();
-});
-
-['filterSearch','filterCategory','filterType'].forEach(id=>{
-$(id).addEventListener('input',renderResults);
-});
-
-$('resetFilters').addEventListener('click',()=>{
-$('filterSearch').value='';
-$('filterRegion').value='';
-$('filterCategory').value='';
-$('filterType').value='';
-countryFilter='';
-selectedCountry='';
-activeRegion='';
-activeCategory='';
-$('countryInfo').classList.remove('show');
-$('countrySelect').value='';
-document.querySelectorAll('.region-btn').forEach(b=>b.classList.remove('active'));
-document.querySelectorAll('.category').forEach(b=>b.classList.remove('active'));
-renderResults();
-updateGlobeSelection();
-});
-
-$('addEntry').addEventListener('click',openModal);
-$('cancelEntry').addEventListener('click',closeModal);
-$('entryModal').addEventListener('click',e=>{if(e.target===$('entryModal'))closeModal();});
-$('exportData').addEventListener('click',exportJSON);
-$('importData').addEventListener('click',()=>$('importFile').click());
-$('importFile').addEventListener('change',e=>{if(e.target.files[0])importJSON(e.target.files[0]);e.target.value='';});
-
-function init(){
-loadRecords();
-buildRegions();
-buildCountries();
-buildCategories();
-renderResults();
-$('resultCount').textContent=`${records.length} available resources · ${allCountries.length} country navigation entries`;
-loadPublishedRecords();
-}
-
-init();
-
-const globeScript=document.createElement('script');
-globeScript.src='https://unpkg.com/globe.gl';
-globeScript.onload=()=>{
-if(typeof Globe==='undefined')return;
-try{
-const el=$('globe');
-globeInstance=Globe()(el)
-.globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-.bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
-.backgroundColor('rgba(0,0,0,0)')
-.showAtmosphere(true)
-.atmosphereColor('#58bdb5')
-.atmosphereAltitude(0.17);
-
-globeInstance.controls().autoRotate=true;
-globeInstance.controls().autoRotateSpeed=0.35;
-globeInstance.controls().enableZoom=true;
-globeInstance.pointOfView({lat:18,lng:5,altitude:2.25});
-globeInstance.width(el.clientWidth).height(el.clientHeight);
-
-window.addEventListener('resize',()=>{
-if(globeInstance){
-globeInstance.width(el.clientWidth).height(el.clientHeight);
-}
-});
-
-fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson')
-.then(r=>{if(!r.ok)throw Error('Map data unavailable');return r.json();})
-.then(data=>{
-globeFeatures=data.features||[];
-window.__waaFeatures=globeFeatures;
-globeInstance
-.polygonsData(globeFeatures)
-.polygonCapColor(f=>{
-const match=countryFromFeature(f);
-return selectedCountry&&match&&normalizeCountryName(match.name)===normalizeCountryName(selectedCountry)?'#d7b978':'rgba(29,121,121,0.23)';
-})
-.polygonSideColor(()=>'rgba(70,160,150,0.12)')
-.polygonStrokeColor(f=>{
-const match=countryFromFeature(f);
-return selectedCountry&&match&&normalizeCountryName(match.name)===normalizeCountryName(selectedCountry)?'#fff0b8':'rgba(156,203,196,0.55)';
-})
-.polygonAltitude(f=>{
-const match=countryFromFeature(f);
-return selectedCountry&&match&&normalizeCountryName(match.name)===normalizeCountryName(selectedCountry)?0.018:0.008;
-})
-.onPolygonClick(f=>{
-const match=countryFromFeature(f);
-const name=match?.name||f.properties?.ADMIN||f.properties?.NAME||f.properties?.name;
-if(name){selectCountry(name,true);}
-})
-.onPolygonHover(f=>{el.style.cursor=f?'pointer':'grab';});
-
-updateGlobeSelection();
-$('globeFallback').classList.add('hide');
-})
-.catch(error=>{
-console.warn('WAA globe map data error:',error);
-$('globeFallback').querySelector('p').textContent='The map boundary service could not be reached. Use country selector and continent buttons.';
-});
-}catch(e){
-console.warn('WAA globe initialisation error:',e);
-}
-};
-document.head.appendChild(globeScript);
-
+  } catch(error) {
+    loading.textContent = "The globe could not start.";
+    console.error(error);
+  }
 })();
 </script>
+
 </body>
 </html>
