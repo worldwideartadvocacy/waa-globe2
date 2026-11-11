@@ -7,12 +7,12 @@
 <style>
 * { box-sizing: border-box; }
 body { margin: 0; background: #061519; color: #f4f7f4; font-family: Arial, sans-serif; overflow-x: hidden; }
-.stage { width: 100vw; height: 450px; position: relative; background: radial-gradient(ellipse at 50% 42%, #164247, #071c21 58%, #041014); }
+.stage { width: 100vw; height: 460px; position: relative; background: radial-gradient(ellipse at 50% 42%, #164247, #071c21 58%, #041014); }
 #globeViz { position: absolute; inset: 0; }
 #loading { position: absolute; top: 40%; width: 100%; text-align: center; color: #b9d2ce; font-size: 14px; z-index: 10; font-family: Georgia, serif; }
-.hint { position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: #a8c3c0; font-size: 11px; pointer-events: none; z-index: 10; }
+.hint { position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; color: #a8c3c0; font-size: 11px; pointer-events: none; z-index: 10; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
 
-/* Embedded Panel Inside Globe Page */
+/* Regional Gateway Panel Inside Globe Page */
 .panel { display: none; max-width: 900px; margin: 20px auto; padding: 0 15px; }
 .panel.show { display: block; }
 .inner { background: #071c20; border: 1px solid #376766; border-radius: 18px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -20,6 +20,7 @@ body { margin: 0; background: #061519; color: #f4f7f4; font-family: Arial, sans-
 h2 { font: 400 26px Georgia,serif; margin: 5px 0; color: #fff; }
 p { color: #c1d0ce; font-size: 13px; line-height: 1.6; }
 .close { background: transparent; border: 1px solid #527674; color: white; border-radius: 50%; width: 32px; height: 32px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.close:hover { background: #1d7979; }
 .links { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-top: 15px; }
 .links a { color: #edf5f2; text-decoration: none; background: #10373b; border: 1px solid #2d5b5b; border-radius: 10px; padding: 11px; font-size: 12px; display: block; transition: background 0.2s; }
 .links a:hover { background: #1d7979; }
@@ -30,7 +31,7 @@ p { color: #c1d0ce; font-size: 13px; line-height: 1.6; }
 <div class="stage">
   <div id="loading">Loading Worldwide Art Advocacy 3D Globe…</div>
   <div id="globeViz"></div>
-  <div class="hint">DRAG TO ROTATE · SCROLL TO ZOOM · CLICK ANY REGION</div>
+  <div class="hint">DRAG TO ROTATE · SCROLL TO ZOOM · CLICK ANY REGION OR COUNTRY</div>
 </div>
 
 <!-- Regional Gateway Panel -->
@@ -76,7 +77,7 @@ p { color: #c1d0ce; font-size: 13px; line-height: 1.6; }
   let globe;
 
   window.openRegionModal = function(name) {
-    const descText = regions[name] ? regions[name][2] : "";
+    const descText = regions[name] ? regions[name][2] : "Explore art, creative communities, cultural heritage, and institutions across " + name + ".";
     if (!descText) return;
 
     document.getElementById("title").textContent = name;
@@ -87,9 +88,9 @@ p { color: #c1d0ce; font-size: 13px; line-height: 1.6; }
 
     categories.forEach(cat => {
       const a = document.createElement("a");
-      a.href = "https://worldwideartadvocacy.wordpress.com/global-art-hub/";
+      a.href = "https://worldwideartadvocacy.org/global-art-hub/";
       a.textContent = cat + " →";
-      a.target = "_parent"; // Opens in the main site window
+      a.target = "_parent";
       linksContainer.appendChild(a);
     });
 
@@ -104,36 +105,13 @@ p { color: #c1d0ce; font-size: 13px; line-height: 1.6; }
   };
 
   try {
-    const globeData = Object.keys(regions).map(key => ({
-      name: key,
-      lat: regions[key][0],
-      lng: regions[key][1]
-    }));
-
     globe = Globe()(document.getElementById("globeViz"))
       .globeImageUrl("https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg")
       .bumpImageUrl("https://unpkg.com/three-globe/example/img/earth-topology.png")
       .backgroundColor("rgba(0,0,0,0)")
       .showAtmosphere(true)
       .atmosphereColor("#58bdb5")
-      .atmosphereAltitude(0.18)
-      .htmlElementsData(globeData)
-      .htmlLat(d => d.lat)
-      .htmlLng(d => d.lng)
-      .htmlElement(d => {
-        const el = document.createElement('button');
-        el.innerHTML = `<div style="background:#1d7979;border:2px solid #e5f0ed;color:#fff;padding:6px 12px;border-radius:14px;font-size:11px;font-weight:bold;cursor:pointer;box-shadow:0 0 15px rgba(29,121,121,0.9);white-space:nowrap;font-family:Arial,sans-serif;">${d.name}</div>`;
-        el.style.transform = 'translate(-50%, -50px)';
-        el.style.border = 'none';
-        el.style.background = 'transparent';
-        el.style.padding = '0';
-        
-        el.onclick = (e) => {
-          e.stopPropagation();
-          window.openRegionModal(d.name);
-        };
-        return el;
-      });
+      .atmosphereAltitude(0.18);
 
     const controls = globe.controls();
     controls.autoRotate = true;
@@ -141,11 +119,29 @@ p { color: #c1d0ce; font-size: 13px; line-height: 1.6; }
     controls.enableZoom = true;
 
     globe.pointOfView({ lat: 18, lng: 5, altitude: 2.25 });
-    document.getElementById("loading").style.display = "none";
+
+    // Load Natural Earth Country Boundaries so countries are clickable on the globe
+    fetch('https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson')
+      .then(res => res.json())
+      .then(data => {
+        globe.polygonsData(data.features)
+          .polygonAltitude(0.008)
+          .polygonCapColor(() => 'rgba(29,121,121,0.25)')
+          .polygonSideColor(() => 'rgba(70,160,150,0.12)')
+          .polygonStrokeColor(() => 'rgba(156,203,196,0.6)')
+          .onPolygonClick(polygon => {
+            const countryName = polygon.properties.ADMIN || polygon.properties.name || "Selected Territory";
+            window.openRegionModal(countryName);
+          });
+        document.getElementById("loading").style.display = "none";
+      })
+      .catch(() => {
+        document.getElementById("loading").style.display = "none";
+      });
 
     window.addEventListener("resize", () => {
       globe.width(window.innerWidth);
-      globe.height(450);
+      globe.height(460);
     });
   } catch (err) {
     document.getElementById("loading").textContent = "Globe initialization failed.";
